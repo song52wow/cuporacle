@@ -1,7 +1,7 @@
 # Cloudflare Pages 配置
 # 由 @cloudflare/next-on-pages 在构建时读取
 
-name = "cuporacle-web"
+name = "cuporacle"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 

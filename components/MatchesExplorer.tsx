@@ -92,36 +92,50 @@ export function MatchesExplorer({ matches, predictions }: Props) {
   return (
     <div>
       {/* 筛选条 */}
-      <div className="glass-strong rounded-2xl p-2 sm:p-3 flex flex-col lg:flex-row lg:items-center gap-3">
-        {/* 状态 tab */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-ink-700/40 hairline overflow-x-auto">
-          {STATUS_OPTIONS.map((s) => (
-            <button
-              key={s.value}
-              onClick={() => handleStatus(s.value)}
-              className={cn(
-                "shrink-0 px-3.5 py-1.5 text-sm rounded-lg font-medium transition flex items-center gap-2",
-                status === s.value
-                  ? "bg-cyan-violet text-ink-950 shadow-neon"
-                  : "text-white/65 hover:text-white hover:bg-white/[0.04]"
-              )}
-            >
-              {s.label}
-              <span
+      <div className="glass-strong rounded-2xl p-2 sm:p-3 flex flex-col gap-3">
+        {/* 第 1 行：状态 + 搜索 */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          {/* 状态 tab */}
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-ink-700/40 hairline overflow-x-auto">
+            {STATUS_OPTIONS.map((s) => (
+              <button
+                key={s.value}
+                onClick={() => handleStatus(s.value)}
                 className={cn(
-                  "text-[10px] font-mono px-1.5 py-0.5 rounded",
+                  "shrink-0 px-3.5 py-1.5 text-sm rounded-lg font-medium transition flex items-center gap-2",
                   status === s.value
-                    ? "bg-ink-950/30 text-ink-950"
-                    : "bg-white/[0.06] text-white/55"
+                    ? "bg-cyan-violet text-ink-950 shadow-neon"
+                    : "text-white/65 hover:text-white hover:bg-white/[0.04]"
                 )}
               >
-                {counts[s.value]}
-              </span>
-            </button>
-          ))}
+                {s.label}
+                <span
+                  className={cn(
+                    "text-[10px] font-mono px-1.5 py-0.5 rounded",
+                    status === s.value
+                      ? "bg-ink-950/30 text-ink-950"
+                      : "bg-white/[0.06] text-white/55"
+                  )}
+                >
+                  {counts[s.value]}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* 搜索 */}
+          <div className="sm:ml-auto relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="搜索球队 / 场地"
+              className="w-full pl-9 pr-3 py-2 rounded-lg bg-ink-700/40 hairline text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-cyan-400/40"
+            />
+          </div>
         </div>
 
-        {/* 分组筛选 */}
+        {/* 第 2 行：分组筛选 */}
         {groups.length > 0 && (
           <div className="flex items-center gap-1 p-1 rounded-xl bg-ink-700/40 hairline overflow-x-auto">
             <button
@@ -151,17 +165,6 @@ export function MatchesExplorer({ matches, predictions }: Props) {
             ))}
           </div>
         )}
-
-        {/* 搜索 */}
-        <div className="lg:ml-auto relative w-full lg:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="搜索球队 / 场地"
-            className="w-full pl-9 pr-3 py-2 rounded-lg bg-ink-700/40 hairline text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-cyan-400/40"
-          />
-        </div>
       </div>
 
       {/* 计数 + 排序提示 */}

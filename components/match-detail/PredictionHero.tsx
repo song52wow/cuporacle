@@ -159,10 +159,7 @@ function TeamSide({
         isHome ? "" : "flex-row-reverse text-right"
       }`}
     >
-      <TeamFlag
-        name={name}
-        className="w-12 h-12 sm:w-14 sm:h-14 text-3xl sm:text-4xl"
-      />
+      <TeamFlag name={name} size="xl" />
       <div className="min-w-0">
         <div className="text-base sm:text-xl font-semibold text-white tracking-tight truncate">
           {name}

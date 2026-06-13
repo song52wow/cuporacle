@@ -59,7 +59,7 @@ export function MatchCard({ match, prediction, index = 0 }: Props) {
         {/* 对阵 */}
         <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <TeamFlag name={match.home_team_name} className="w-9 h-9 text-xl" />
+            <TeamFlag name={match.home_team_name} size="md" />
             <div className="min-w-0">
               <div className="text-[15px] font-semibold text-white truncate">
                 {match.home_team_name}
@@ -85,7 +85,7 @@ export function MatchCard({ match, prediction, index = 0 }: Props) {
               </div>
               <div className="text-[10px] font-mono text-white/40">客队</div>
             </div>
-            <TeamFlag name={match.away_team_name} className="w-9 h-9 text-xl" />
+            <TeamFlag name={match.away_team_name} size="md" />
           </div>
         </div>
 

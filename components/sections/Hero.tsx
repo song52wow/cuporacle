@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Activity, BarChart3, Trophy } from "lucide-react";
+import { TeamFlag } from "@/components/TeamFlag";
 
 export function Hero() {
   return (
@@ -107,9 +108,7 @@ export function Hero() {
                 <span className="text-cyan-300/90">04 模型共识</span>
               </div>
               <div className="mt-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg grid place-items-center text-2xl bg-white/[0.04] border border-white/10">
-                  🇧🇷
-                </div>
+                <TeamFlag name="巴西" size="md" className="rounded-lg" />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-white truncate">巴西</div>
                   <div className="text-[10px] font-mono text-white/40">FIFA #3 · 小组赛 C</div>
@@ -119,9 +118,7 @@ export function Hero() {
                   <div className="text-sm font-semibold text-white truncate">摩洛哥</div>
                   <div className="text-[10px] font-mono text-white/40">FIFA #13 · 小组赛 C</div>
                 </div>
-                <div className="w-10 h-10 rounded-lg grid place-items-center text-2xl bg-white/[0.04] border border-white/10">
-                  🇲🇦
-                </div>
+                <TeamFlag name="摩洛哥" size="md" className="rounded-lg" />
               </div>
 
               <div className="mt-6 space-y-3">

@@ -8,6 +8,9 @@ import {
   KeyPlayersPanel,
 } from "@/components/match-detail/KeyFactorsPanel";
 import { ModelComparison } from "@/components/match-detail/ModelComparison";
+
+// Cloudflare Pages / Workers 要求显式声明 Edge Runtime
+export const runtime = "edge";
 import { RatingsTable } from "@/components/match-detail/RatingsTable";
 import { ScoreDistributionBars } from "@/components/ScoreDistributionBars";
 

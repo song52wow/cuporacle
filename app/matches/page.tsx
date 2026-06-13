@@ -2,6 +2,9 @@ import { getMatches, getPrediction } from "@/lib/api";
 import { MatchesExplorer } from "@/components/MatchesExplorer";
 import { Suspense } from "react";
 
+// Cloudflare Pages / Workers 要求显式声明 Edge Runtime
+export const runtime = "edge";
+
 export const metadata = {
   title: "全部赛事 · CupOracle",
   description: "浏览 2026 世界杯全部 104 场比赛的 AI 预测与状态。",

@@ -37,9 +37,9 @@ async function safeFetch<T>(path: string): Promise<T | null> {
   }
   try {
     const res = await fetch(url, {
-      // 3s 超时，避免后端挂了把官网卡死
+      // 10s 超时，D1 冷启动可能较慢
       // 注意:不能加 cache: "no-store"，CF Pages Edge Runtime 不支持该字段
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(10000),
     });
     if (!res.ok) return null;
     return (await res.json()) as T;

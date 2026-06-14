@@ -19,8 +19,11 @@ import type {
 // 想纯本地预览（不依赖后端），把 NEXT_PUBLIC_API_BASE 留空，或设 NEXT_PUBLIC_USE_MOCK=1
 const BASE = process.env.NEXT_PUBLIC_API_BASE?.trim() || "";
 const FORCE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "1";
-const USE_MOCK = FORCE_MOCK || !BASE;
-const BASE_OR_MOCK = BASE || "http://localhost:8000";
+// 兜底:即使 env 在 build 时没注入,也能拿到真实后端 URL(URL 是公开的)
+const DEFAULT_BASE = "https://cuporacle-service.song52wow.workers.dev";
+const RESOLVED_BASE = BASE || DEFAULT_BASE;
+const USE_MOCK = FORCE_MOCK || !RESOLVED_BASE;
+const BASE_OR_MOCK = RESOLVED_BASE;
 
 if (process.env.NODE_ENV !== "production") {
   console.log(`[api] BASE=${BASE} | USE_MOCK=${USE_MOCK} | BASE_OR_MOCK=${BASE_OR_MOCK}`);
@@ -34,9 +37,8 @@ async function safeFetch<T>(path: string): Promise<T | null> {
   }
   try {
     const res = await fetch(url, {
-      // 客户端 / RSC 都不缓存，方便热更新
-      cache: "no-store",
       // 3s 超时，避免后端挂了把官网卡死
+      // 注意:不能加 cache: "no-store"，CF Pages Edge Runtime 不支持该字段
       signal: AbortSignal.timeout(3000),
     });
     if (!res.ok) return null;

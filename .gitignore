@@ -40,6 +40,9 @@ yarn-error.log*
 # Playwright MCP browser artifacts (design 参考截图)
 /.playwright-mcp/
 
+# Design screenshots (开发时的视觉参考图，跟构建无关)
+/screenshots/
+
 # Cloudflare wrangler
 .wrangler/
 

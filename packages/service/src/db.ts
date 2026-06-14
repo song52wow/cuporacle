@@ -271,8 +271,34 @@ export async function getPredictionBundle(
 
   if (!primary && models.results.length === 0) return null;
 
+  // If no primary prediction, use the first successful model as fallback
+  let primaryResponse = primary ? rowToPrimary(primary) : null;
+  if (!primaryResponse && models.results.length > 0) {
+    const firstOk = models.results.find((r) => r.status === "ok");
+    if (firstOk) {
+      primaryResponse = {
+        match_id: firstOk.match_id,
+        expected_goals_home: firstOk.expected_goals_home ?? 0,
+        expected_goals_away: firstOk.expected_goals_away ?? 0,
+        win_prob: firstOk.win_prob ?? 0,
+        draw_prob: firstOk.draw_prob ?? 0,
+        loss_prob: firstOk.loss_prob ?? 0,
+        score_distribution: safeJson<ScoreDistributionItem[]>(firstOk.score_distribution_json) ?? [],
+        key_factors: safeJson<KeyFactor[]>(firstOk.key_factors_json as unknown as string | null) ?? [],
+        key_players: safeJson<KeyPlayer[]>(firstOk.key_players_json as unknown as string | null) ?? [],
+        narrative: firstOk.narrative ?? "",
+        risk_factors: safeArr<string>(firstOk.risk_factors_json as unknown as string | null),
+        degraded: false,
+        parse_failed: !!firstOk.parse_failed,
+        llm_provider: firstOk.provider,
+        llm_model: firstOk.model,
+        created_at: firstOk.created_at,
+      };
+    }
+  }
+
   return {
-    primary: primary ? rowToPrimary(primary) : null,
+    primary: primaryResponse,
     models: models.results.map(rowToModelResult),
   };
 }

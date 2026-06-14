@@ -24,8 +24,7 @@ interface Props {
 }
 
 export function MatchCard({ match, prediction, index = 0 }: Props) {
-  // 优先用 primary，没有则取第一个成功的 model 作为 fallback
-  const p = prediction?.primary ?? prediction?.models?.find((m) => m.status === "ok") ?? null;
+  const p = prediction?.primary;
   const hasP = !!p;
   const isFinished = match.status === "FINISHED";
 

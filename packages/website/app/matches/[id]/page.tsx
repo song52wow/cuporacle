@@ -31,8 +31,7 @@ export default async function MatchDetailPage({
   const detail = await getMatchDetail(params.id);
   if (!detail) return notFound();
   const prediction = await getPrediction(params.id);
-  // 优先用 primary，没有则取第一个成功的 model 作为 fallback
-  const p = prediction?.primary ?? prediction?.models?.find((m) => m.status === "ok") ?? null;
+  const p = prediction?.primary ?? null;
   const m = detail.match;
 
   return (

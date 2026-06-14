@@ -10,8 +10,12 @@
     "dev:web": "npm run dev --workspace=@cuporacle/website",
     "dev:service": "npm run dev --workspace=@cuporacle/service",
     "build:web": "npm run build --workspace=@cuporacle/website",
+    "build:service": "npm run build --workspace=@cuporacle/service",
+    "deploy:service": "npm run deploy --workspace=@cuporacle/service",
     "pages:build": "npm run pages:build --workspace=@cuporacle/website",
     "pages:dev": "npm run pages:dev --workspace=@cuporacle/website",
+    "typecheck:service": "npm run typecheck --workspace=@cuporacle/service",
+    "typecheck:web": "tsc --noEmit -p packages/website/tsconfig.json",
     "lint:web": "npm run lint --workspace=@cuporacle/website",
     "lint": "npm run lint --workspaces --if-present"
   },

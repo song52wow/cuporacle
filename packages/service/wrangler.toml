@@ -1,0 +1,26 @@
+name = "cuporacle-service"
+main = "src/index.ts"
+compatibility_date = "2024-12-24"
+compatibility_flags = ["nodejs_compat"]
+
+# 默认生产环境
+[env.production]
+name = "cuporacle-service"
+
+# 预览环境（PR / preview branch）
+[env.preview]
+name = "cuporacle-service-preview"
+
+# 可选 KV / D1 / R2 绑定（先用占位；接 DB 后再开）
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "..."
+
+# 计划：接 Cloudflare D1 存 matches / predictions
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "cuporacle"
+# database_id = "..."
+
+[observability]
+enabled = true

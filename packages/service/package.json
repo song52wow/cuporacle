@@ -2,15 +2,28 @@
   "name": "@cuporacle/service",
   "version": "0.1.0",
   "private": true,
-  "description": "CupOracle 后端 API 服务（占位）",
+  "type": "module",
+  "description": "CupOracle 后端 API — Cloudflare Workers + Hono, TypeScript",
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "echo \"service: dev placeholder — TBD\" && exit 0",
-    "build": "echo \"service: build placeholder — TBD\" && exit 0",
-    "lint": "echo \"service: no lint yet\" && exit 0"
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run --outdir=dist",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "hono": "^4.6.14"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241224.0",
+    "typescript": "^5.6.0",
+    "wrangler": "^3.114.17"
   },
   "keywords": [
     "world-cup",
     "ai-prediction",
-    "placeholder"
+    "cloudflare-workers",
+    "hono"
   ]
 }

@@ -1,40 +1,54 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# CupOracle website monorepo — .gitignore
 
-# dependencies
-/node_modules
+# Dependencies (任何包下的 node_modules)
+**/node_modules/
 /.pnp
 .pnp.js
 .yarn/install-state.gz
 
-# testing
-/coverage
-
-# next.js
+# Build artifacts (任何包产生的)
 /.next/
+**/.next/
+/.vercel/
+**/.vercel/
 /out/
+**/out/
+/build/
+**/build/
+/dist/
+**/dist/
 
-# production
-/build
+# TypeScript
+*.tsbuildinfo
+**/*.tsbuildinfo
+next-env.d.ts
+**/next-env.d.ts
 
-# misc
+# Environment files
+.env
+.env*.local
+.env.production
+
+# Misc
 .DS_Store
 *.pem
-
-# debug
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
-.env.production
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# playwright mcp browser artifacts
+# Playwright MCP browser artifacts (design 参考截图)
 /.playwright-mcp/
+
+# Cloudflare wrangler
+.wrangler/
+
+# Python（如果以后 admin 也纳入 monorepo）
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.coverage
+*.egg-info/

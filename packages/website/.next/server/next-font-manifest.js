@@ -1,1 +1,0 @@
-self.__NEXT_FONT_MANIFEST='{"pages":{},"app":{"/Volumes/Extension/song52wow/world-cup/website/packages/website/app/layout":["static/media/463dafcda517f24f-s.p.woff","static/media/4473ecc91f70f139-s.p.woff"]},"appUsingSizeAdjust":true,"pagesUsingSizeAdjust":false}';

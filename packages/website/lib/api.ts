@@ -73,8 +73,19 @@ export async function getMatchDetail(id: string): Promise<MatchDetailResponse | 
 }
 
 export async function getPrediction(id: string): Promise<PredictionBundle | null> {
-  const data = await safeFetch<PredictionBundle>(`/api/predictions/${id}`);
-  return data ?? mockPredictionBundle(id);
+  // 用绝对 URL 直接调 Worker，避免 rewrite 问题
+  const url = `${BASE_OR_MOCK}/api/predictions/${id}`;
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
+    console.log(`[api] getPrediction(${id}) → ${res.status}`);
+    if (!res.ok) return mockPredictionBundle(id);
+    const data = await res.json() as PredictionBundle;
+    console.log(`[api] getPrediction(${id}) primary=${data.primary != null} models=${data.models?.length ?? 0}`);
+    return data;
+  } catch (e) {
+    console.log(`[api] getPrediction(${id}) FAILED:`, (e as Error).message);
+    return mockPredictionBundle(id);
+  }
 }
 
 export const API_BASE = BASE_OR_MOCK;

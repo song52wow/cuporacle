@@ -41,12 +41,11 @@ async function safeFetch<T>(path: string): Promise<T | null> {
       // 注意:不能加 cache: "no-store"，CF Pages Edge Runtime 不支持该字段
       signal: AbortSignal.timeout(10000),
     });
+    console.log(`[api] ${path} → ${res.status}`);
     if (!res.ok) return null;
     return (await res.json()) as T;
   } catch (e) {
-    if (process.env.NODE_ENV !== "production") {
-      console.log(`[api] fetch FAILED ${path}:`, (e as Error).message);
-    }
+    console.log(`[api] fetch FAILED ${path}:`, (e as Error).message);
     return null;
   }
 }

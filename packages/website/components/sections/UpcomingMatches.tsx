@@ -12,7 +12,14 @@ export async function UpcomingMatches() {
 
   // 并行拉预测
   const preds = await Promise.all(
-    upcoming.map((m) => getPrediction(m.id).catch(() => null))
+    upcoming.map(async (m) => {
+      const p = await getPrediction(m.id).catch((e) => {
+        console.error(`[UpcomingMatches] fetch prediction failed for ${m.id}:`, e);
+        return null;
+      });
+      console.log(`[UpcomingMatches] ${m.id} (${m.home_team_name} vs ${m.away_team_name}): primary=${p?.primary != null} models=${p?.models?.length ?? 0}`);
+      return p;
+    })
   );
 
   return (

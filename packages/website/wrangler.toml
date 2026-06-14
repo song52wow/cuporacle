@@ -8,9 +8,11 @@ compatibility_flags = ["nodejs_compat"]
 # next-on-pages 输出目录（不要改）
 pages_build_output_dir = ".vercel/output/static"
 
-# 如需 Cloudflare 缓存调优可放开：
-# [vars]
-# NEXT_PUBLIC_USE_MOCK = "0"
+# 构建时暴露的公开变量(进 bundle,客户端可见)
+# NEXT_PUBLIC_* 会在 next build 时被 inline 到 JS 里
+[vars]
+NEXT_PUBLIC_API_BASE = "https://cuporacle-service.song52wow.workers.dev"
+NEXT_PUBLIC_USE_MOCK = "0"
 
 # 部署时 BUILD 命令（Cloudflare Dashboard 也要填这个）：
 #   npm run pages:build

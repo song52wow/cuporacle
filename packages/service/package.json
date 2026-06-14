@@ -1,0 +1,16 @@
+{
+  "name": "@cuporacle/service",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CupOracle 后端 API 服务（占位）",
+  "scripts": {
+    "dev": "echo \"service: dev placeholder — TBD\" && exit 0",
+    "build": "echo \"service: build placeholder — TBD\" && exit 0",
+    "lint": "echo \"service: no lint yet\" && exit 0"
+  },
+  "keywords": [
+    "world-cup",
+    "ai-prediction",
+    "placeholder"
+  ]
+}

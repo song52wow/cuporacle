@@ -174,6 +174,7 @@ export async function getMatches(
   db: D1Database,
   status?: string
 ): Promise<MatchListResponse> {
+  // 一次性查所有 matches(最多 100 多行,无 IN 限制)
   const sql = status
     ? "SELECT * FROM matches WHERE status = ? ORDER BY utc_date"
     : "SELECT * FROM matches ORDER BY utc_date";
@@ -181,18 +182,14 @@ export async function getMatches(
   const { results: rows } = await stmt.all<MatchRow>();
   if (rows.length === 0) return { matches: [], total: 0 };
 
-  const ids = rows.map((r) => r.id);
-  const ph = ids.map(() => "?").join(",");
-
+  // 全表聚合(避免 IN 子句撞 D1 变量上限),然后 JS 端 join 到 matches
   const [statsRes, primRes] = await Promise.all([
     db.prepare(
       `SELECT match_id, COUNT(*) as total,
               SUM(CASE WHEN status='ok' THEN 1 ELSE 0 END) as ok
-       FROM prediction_models WHERE match_id IN (${ph}) GROUP BY match_id`
-    ).bind(...ids).all<PredStatsRow>(),
-    db.prepare(
-      `SELECT match_id FROM predictions WHERE match_id IN (${ph})`
-    ).bind(...ids).all<PrimaryRow>(),
+       FROM prediction_models GROUP BY match_id`
+    ).all<PredStatsRow>(),
+    db.prepare(`SELECT match_id FROM predictions`).all<PrimaryRow>(),
   ]);
 
   const statsMap = new Map(statsRes.results.map((s) => [s.match_id, s]));

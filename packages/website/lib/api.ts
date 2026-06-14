@@ -22,10 +22,18 @@ const FORCE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "1";
 const USE_MOCK = FORCE_MOCK || !BASE;
 const BASE_OR_MOCK = BASE || "http://localhost:8000";
 
+if (process.env.NODE_ENV !== "production") {
+  console.log(`[api] BASE=${BASE} | USE_MOCK=${USE_MOCK} | BASE_OR_MOCK=${BASE_OR_MOCK}`);
+}
+
 async function safeFetch<T>(path: string): Promise<T | null> {
   if (USE_MOCK) return null;
+  const url = `${BASE_OR_MOCK}${path}`;
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[api] fetch → ${url}`);
+  }
   try {
-    const res = await fetch(`${BASE_OR_MOCK}${path}`, {
+    const res = await fetch(url, {
       // 客户端 / RSC 都不缓存，方便热更新
       cache: "no-store",
       // 3s 超时，避免后端挂了把官网卡死
@@ -33,7 +41,10 @@ async function safeFetch<T>(path: string): Promise<T | null> {
     });
     if (!res.ok) return null;
     return (await res.json()) as T;
-  } catch {
+  } catch (e) {
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[api] fetch FAILED ${path}:`, (e as Error).message);
+    }
     return null;
   }
 }

@@ -89,7 +89,9 @@ const SYNC_TABLES = [
   "matches", "team_form", "h2h", "team_squad",
   "squad_ratings", "predictions", "prediction_models",
 ] as const;
-const SYNC_BATCH = 500;  // D1 单次 batch 上限是 1000,留点余量
+// D1 batch 限制:statements 50 / vars 100000;最紧的是 vars,按最宽列算
+// prediction_models 18 列 × 50 = 900 vars,远低于 100000,稳妥
+const SYNC_BATCH = 50;
 
 app.post("/internal/sync", async (c) => {
   const auth = c.req.header("Authorization");

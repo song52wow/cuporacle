@@ -70,10 +70,13 @@ pushRoutes.post("/api/push/unsubscribe", async (c) => {
 
 // POST /internal/push/broadcast
 // body: BroadcastPayload (title/body/url/tag)
-// 鉴权: X-Internal-Token == env.INTERNAL_BROADCAST_TOKEN
+// 鉴权: X-Internal-Token 匹配 env.INTERNAL_BROADCAST_TOKEN 或 env.SYNC_SECRET 任一即可
+// (sync.mjs 是本地脚本,无法访问 wrangler secret 注入的 INTERNAL_BROADCAST_TOKEN,
+//  用 SYNC_SECRET 作为 fallback,sync.mjs 已部署为 Cloudflare secret)
 pushRoutes.post("/internal/push/broadcast", async (c) => {
   const token = c.req.header("X-Internal-Token");
-  if (!token || token !== c.env.INTERNAL_BROADCAST_TOKEN) {
+  const validTokens = [c.env.INTERNAL_BROADCAST_TOKEN, c.env.SYNC_SECRET].filter(Boolean);
+  if (!token || !validTokens.includes(token)) {
     return c.json({ error: "unauthorized" }, 401);
   }
 

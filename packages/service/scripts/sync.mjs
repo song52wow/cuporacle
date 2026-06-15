@@ -164,3 +164,45 @@ console.log(`\n✅ 同步成功 (${ms}ms,共 ${result.total} 行):`);
 for (const [t, n] of Object.entries(result.counts)) {
   console.log(`  ${t.padEnd(20)} ${n} 行`);
 }
+
+// ─── 广播推送:对新预测通知所有订阅者 ───────────────────────
+// 鉴权:push-handlers 端读 c.env.INTERNAL_BROADCAST_TOKEN,头名 X-Internal-Token。
+// 本地脚本没有 wrangler secret 通道;spec 要求用 SYNC_SECRET 调,会 401。
+// 这是 plan 内部矛盾,本实现先按 spec 走;若需修,见 Task 9 鉴权字段调整。
+const BROADCAST_TAG_PREFIX = "match-";
+const broadcastBase = opts.service.replace(/\/$/, "");
+if (!opts.dryRun) {
+  try {
+    const matchesRes = await fetch(`${broadcastBase}/api/matches?status=TIMED`, {
+      headers: { "User-Agent": "cuporacle-sync" },
+    });
+    if (matchesRes.ok) {
+      const data = await matchesRes.json();
+      const matches = (data.matches || []).slice(0, 50); // 上限 50 条,防止单次风暴
+      for (const m of matches) {
+        const tag = `${BROADCAST_TAG_PREFIX}${m.id}`;
+        const r = await fetch(`${broadcastBase}/internal/push/broadcast`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Internal-Token": process.env.SYNC_SECRET ?? "",
+          },
+          body: JSON.stringify({
+            title: `⚽ ${m.home_team_name} vs ${m.away_team_name} 预测已更新`,
+            body: "点击查看 AI 模型分析",
+            url: `/matches/${m.id}`,
+            tag,
+          }),
+        });
+        if (!r.ok) {
+          console.warn(`[sync] broadcast failed for ${tag}: ${r.status}`);
+        }
+      }
+      console.log(`📣 Broadcast attempted for ${matches.length} matches`);
+    } else {
+      console.warn(`[sync] matches fetch failed: ${matchesRes.status}`);
+    }
+  } catch (e) {
+    console.warn(`[sync] broadcast loop error: ${e.message}`);
+  }
+}

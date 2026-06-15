@@ -1,0 +1,50 @@
+{
+  "name": "CupOracle · 2026 世界杯 AI 预测",
+  "short_name": "CupOracle",
+  "description": "基于多模型 LLM 的 2026 世界杯胜负、概率与比分预测",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a14",
+  "theme_color": "#0a0a14",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "categories": ["sports", "news", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "全部赛事",
+      "short_name": "赛事",
+      "description": "浏览全部 104 场赛事预测",
+      "url": "/matches",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "今日比赛",
+      "short_name": "今日",
+      "description": "查看今天的所有比赛",
+      "url": "/matches?status=IN_PLAY",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

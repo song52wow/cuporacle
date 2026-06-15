@@ -142,3 +142,25 @@ export interface MatchDetailResponse {
   away_ratings: PlayerRating[];
   prediction_status: Record<string, string>;
 }
+
+// ─── Web Push ─────────────────────────────────────────────────
+export interface PushSubscriptionKey {
+  p256dh: string;
+  auth: string;
+}
+export interface PushSubscriptionJSON {
+  endpoint: string;
+  keys: PushSubscriptionKey;
+}
+export interface SubscribeRequest {
+  subscription: PushSubscriptionJSON;
+}
+export interface UnsubscribeRequest {
+  endpoint: string;
+}
+export interface BroadcastPayload {
+  title: string;
+  body: string;
+  url: string;
+  tag: string;
+}

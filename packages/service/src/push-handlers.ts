@@ -1,6 +1,7 @@
 // Hono 路由:订阅/退订/VAPID 公钥/广播
-// 广播由 /internal/sync 同步完成后调用,遍历 D1 未结束比赛
-// (排除 FINISHED) 各发一次通知,tag = match-<id>,由 push_recent 表去重(10 分钟)。
+// 广播由 /internal/sync 同步完成后调用 — 每次调用对应一个未结束比赛
+// (sync 脚本遍历未结束比赛,逐个调一次 broadcast),tag = match-<id>,
+// 由 push_recent 表去重(10 分钟)。
 
 import { Hono } from "hono";
 import type { Env } from "./index";
@@ -82,7 +83,7 @@ pushRoutes.post("/internal/push/broadcast", async (c) => {
   } catch {
     return c.json({ error: "invalid json" }, 400);
   }
-  if (!payload.title || !payload.url || !payload.tag) {
+  if (!payload.title || !payload.body || !payload.url || !payload.tag) {
     return c.json({ error: "missing fields" }, 400);
   }
 
@@ -97,11 +98,10 @@ pushRoutes.post("/internal/push/broadcast", async (c) => {
   }
 
   // VAPID 初始化(每次冷启动都要)
-  // TODO(Task 10): Env 上 VAPID_* 改为必填,移除 !.
   configureVapid({
-    publicKey: c.env.VAPID_PUBLIC_KEY!,
-    privateKey: c.env.VAPID_PRIVATE_KEY!,
-    subject: c.env.VAPID_SUBJECT!,
+    publicKey: c.env.VAPID_PUBLIC_KEY,
+    privateKey: c.env.VAPID_PRIVATE_KEY,
+    subject: c.env.VAPID_SUBJECT,
   });
 
   // 查所有订阅,逐个发

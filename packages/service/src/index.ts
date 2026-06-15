@@ -5,6 +5,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { getMatchDetail, getMatches, getPredictionBundle, getTournament } from "./db";
+import { pushRoutes } from "./push-handlers";
 import type { MatchStatus } from "./types";
 
 const ALLOWED_ORIGINS = [
@@ -19,14 +20,12 @@ type Bindings = {
   // 由 `wrangler secret put SYNC_SECRET` 注入
   // 用来守 /internal/sync 端点,只允许本地 sync 脚本推数据
   SYNC_SECRET: string;
-  // Web Push — Task 10 在 wrangler.toml/secret 配齐后再正式启用
-  // 暂以可选字段占位,避免 push-handlers.ts 类型报错
-  VAPID_PUBLIC_KEY?: string;
-  VAPID_PRIVATE_KEY?: string;
-  VAPID_SUBJECT?: string;
-  INTERNAL_BROADCAST_TOKEN?: string;
+  // Web Push — 由 wrangler secret 注入(Task 14 配齐)
+  VAPID_PUBLIC_KEY: string;
+  VAPID_PRIVATE_KEY: string;
+  VAPID_SUBJECT: string;
+  INTERNAL_BROADCAST_TOKEN: string;
 };
-// 暂存别名:Task 10 会重命名为 Env 并把这些字段改为必填
 export type Env = Bindings;
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -42,6 +41,9 @@ app.use(
     maxAge: 86400,
   })
 );
+
+// Web Push 路由:订阅/退订/VAPID 公钥/内部广播
+app.route("/", pushRoutes);
 
 // 健康检查 / 根路径
 app.get("/", (c) =>

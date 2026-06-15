@@ -11,6 +11,12 @@ name = "cuporacle-service"
 [env.preview]
 name = "cuporacle-service-preview"
 
+# VAPID 配置（非敏感 - 公开信息）
+# 私钥 / token / subject mailto 通过 wrangler secret put 注入
+[vars]
+VAPID_PUBLIC_KEY = "BPLxv2KyVuP3Op2MPbE7t9kmBPx1TeND1l6_jPY90OU5r1ij7mIfrxpeB6MIQ34zQS9hErXpf7iCXu28k2vP1iI"
+VAPID_SUBJECT = "mailto:admin@cuporacle.com"
+
 # 可选 KV / D1 / R2 绑定（先用占位；接 DB 后再开）
 # [[kv_namespaces]]
 # binding = "CACHE"

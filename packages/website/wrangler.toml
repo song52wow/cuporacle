@@ -12,6 +12,7 @@ pages_build_output_dir = ".vercel/output/static"
 # NEXT_PUBLIC_* 会在 next build 时被 inline 到 JS 里
 [vars]
 NEXT_PUBLIC_API_BASE = "https://cuporacle-service.song52wow.workers.dev"
+NEXT_PUBLIC_VAPID_PUBLIC_KEY = "BPLxv2KyVuP3Op2MPbE7t9kmBPx1TeND1l6_jPY90OU5r1ij7mIfrxpeB6MIQ34zQS9hErXpf7iCXu28k2vP1iI"
 # NEXT_PUBLIC_USE_MOCK = "0"
 
 # 部署时 BUILD 命令（Cloudflare Dashboard 也要填这个）：

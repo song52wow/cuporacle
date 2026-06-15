@@ -72,7 +72,7 @@ npm install
 
 | 目标 | 命令 | 备注 |
 | --- | --- | --- |
-| Website → Pages | `npm run pages:build` + `wrangler pages deploy` | 项目名 `cuporacle-web`（不要用 `cuporacle`，那个名字已被旧 Workers 项目占用） |
+| Website → Pages | `npm run pages:build` + `wrangler pages deploy` | 项目名 `cuporacle`（部署到 `cuporacle.pages.dev`） |
 | Service → Workers | `npm run deploy:service` | 项目名 `cuporacle-service` |
 
 Cloudflare Dashboard 构建命令：根目录设 `packages/website`，build 命令 `npm run pages:build`。env 设 `NEXT_PUBLIC_API_BASE=https://cuporacle-service.<子域>.workers.dev`。

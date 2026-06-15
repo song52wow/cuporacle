@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SwRegistrar } from "@/components/SwRegistrar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -22,6 +23,13 @@ export const metadata: Metadata = {
   description:
     "基于多模型 LLM 的 2026 世界杯胜负、概率与比分预测，覆盖小组赛至决赛的全程赛事追踪。",
   metadataBase: new URL("http://localhost:3000"),
+  manifest: "/manifest.webmanifest",
+  applicationName: "CupOracle",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "CupOracle",
+  },
   openGraph: {
     title: "CupOracle · 世界杯 AI 预测平台",
     description:
@@ -41,6 +49,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN" className="dark">
+      <head>
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
@@ -49,6 +60,7 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6520980306039403"
           crossOrigin="anonymous"
         />
+        <SwRegistrar />
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />

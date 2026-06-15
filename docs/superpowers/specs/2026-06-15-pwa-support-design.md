@@ -76,7 +76,9 @@ CupOracle 官网（`packages/website`，Next.js 14 App Router，部署到 Cloudf
 │        body: { title, body, url, tag }  → web-push 推给所有订阅     │
 │    GET  /api/push/vapid-public-key                  → VAPID 公钥     │
 │                                                                      │
-│  D1 新增表: push_subscriptions (id, endpoint, p256dh, auth, created)  │
+│  D1 新增表:                                                           │
+│    push_subscriptions (id, endpoint, p256dh, auth, created_at)         │
+│    push_recent (tag PK, pushed_at)        -- 推送去重                  │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -123,17 +125,15 @@ CupOracle 官网（`packages/website`，Next.js 14 App Router，部署到 Cloudf
 |---|---|---|
 | `src/push.ts` | VAPID 签名 + `web-push` 封装 | ~80 |
 | `src/push-handlers.ts` | Hono 路由 4 个 | ~120 |
-| `src/db-push-subscriptions.sql` | D1 表 DDL | ~10 |
-| `migrations/0002_push_subscriptions.sql` | 同上，正式迁移文件 | ~10 |
-| `wrangler.toml` | 加 `[[d1_databases]] binding = "DB"` 实际配置 | ~5 |
+| `migrations/0002_push_subscriptions.sql` | D1 表 `push_subscriptions` DDL（含去重辅助表） | ~15 |
 
 ### 5.4 `packages/service` 修改文件
 
 | 文件 | 修改 |
 |---|---|
-| `src/index.ts` | 挂载新路由 |
-| `package.json` | 加 `web-push` 依赖 |
-| `wrangler.toml` | 新增 D1 binding（ID 后续填）+ 新增 `[triggers] crons`（暂不用，先不填） |
+| `src/index.ts` | 挂载 push 路由（4 个端点） |
+| `package.json` | 加 `web-push` 运行时依赖（不需 `@types/web-push`，自带） |
+| `wrangler.toml` | 填入 D1 binding（ID 来自步骤 9.2 `wrangler d1 create` 输出的 `database_id`） |
 
 ## 6. 数据流
 
@@ -220,12 +220,12 @@ const r = await fetch(`${SELF}/internal/push/broadcast`, {
         ↓
 push-handlers.broadcast:
   · 鉴权 X-Internal-Token
-  · 查 last_pushed_at 表或 KV，10 分钟内同 tag 已推过 → skip
+  · 查 push_recent 表，10 分钟内同 tag 已推过 → skip
   · SELECT endpoint, p256dh, auth FROM push_subscriptions
   · 并发 web-push.sendNotification(s, payload, { vapidDetails })
   · 对 201/202: 静默成功
   · 对 410/404: DELETE WHERE endpoint = ?
-  · 写 last_pushed_at = now()
+  · UPSERT push_recent (tag, pushed_at) VALUES (?, ?)，pushed_at = now()
         ↓
 客户端 SW 收到 push 事件:
 self.registration.showNotification(title, {
@@ -261,7 +261,7 @@ SW notificationclick 事件:
 | VAPID 私钥泄漏/丢失 | `wrangler secret put VAPID_PRIVATE_KEY` 重新生成；所有订阅失效，用户需重新订阅 |
 | D1 subscribe 写入失败 | 端点 500；客户端保持"未订阅"状态 |
 | web-push 返回 410/404 | 删 endpoint 记录 |
-| 推送频率爆炸 | broadcast 端点用 `tag` 做 10 分钟去重（KV 或 D1 字段） |
+| 推送频率爆炸 | broadcast 端点用 D1 表 `push_recent` (tag PRIMARY KEY, pushed_at) 做 10 分钟去重 |
 | `/internal/push/broadcast` 鉴权 | `X-Internal-Token` 比对 `INTERNAL_BROADCAST_TOKEN` secret |
 | 远程 SVG 缓存无限增长 | flagcdn.com 国旗 SVG：cache-first + LRU 100 条上限（手写 FIFO） |
 
@@ -283,11 +283,12 @@ SW notificationclick 事件:
 
 | 步骤 | 命令 / 操作 |
 |---|---|
-| 1. 生成 VAPID 密钥对 | 一次性 CLI: `npx web-push generate-vapid-keys`，私钥入 `wrangler secret put VAPID_PRIVATE_KEY`，公钥入 `wrangler.toml [vars] NEXT_PUBLIC_VAPID_PUBLIC_KEY` |
-| 2. 应用 D1 迁移 | `wrangler d1 migrations apply DB --remote`（在 `packages/service/`） |
-| 3. 部署 service | `npm run deploy:service` |
-| 4. 部署 website | `npm run pages:build` + `wrangler pages deploy` |
-| 5. 真机验证 | Android Chrome + iOS Safari 各测一次完整流程 |
+| 1. 生成 VAPID 密钥对 | 一次性 CLI: `npx web-push generate-vapid-keys`，私钥入 `wrangler secret put VAPID_PRIVATE_KEY`，公钥入 `website `wrangler.toml` `[vars]` `NEXT_PUBLIC_VAPID_PUBLIC_KEY` |
+| 2. 创建 D1 数据库 | `cd packages/service && wrangler d1 create cuporacle-db`，复制输出 `database_id` 到 `wrangler.toml` 的 `[[d1_databases]]` |
+| 3. 应用 D1 迁移 | `wrangler d1 migrations apply DB --remote`（在 `packages/service/`） |
+| 4. 部署 service | `npm run deploy:service` |
+| 5. 部署 website | `npm run pages:build` + `wrangler pages deploy` |
+| 6. 真机验证 | Android Chrome + iOS Safari 各测一次完整流程 |
 
 ## 10. 风险与缓解
 
@@ -303,7 +304,7 @@ SW notificationclick 事件:
 
 - iOS 启动画面定制（iOS 自动从 `apple-touch-icon` 生成）
 - BackgroundSync API
-- 应用徽章 API（`navigator.setAppBadge`）—— 待推 APi 浏览器覆盖度低
+- 应用徽章 API（`navigator.setAppBadge`）—— 该 API 浏览器覆盖度低
 - 推送给特定订阅者（仅全站）
 - 桌面端 PWA 启动画面 + 多窗口管理
 - Service Worker 的 IndexedDB 状态恢复

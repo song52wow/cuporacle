@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
+import { NotificationBell } from "@/components/NotificationBell";
 import { cn } from "@/lib/utils";
 import { Activity, Trophy } from "lucide-react";
 
@@ -40,6 +41,7 @@ export function SiteHeader() {
           })}
         </nav>
         <div className="flex items-center gap-2">
+          <NotificationBell />
           <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-full hairline text-emerald-300/90">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-glow" />
             LIVE · 2026

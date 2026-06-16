@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     "基于多模型 LLM 的 2026 世界杯胜负、概率与比分预测，覆盖小组赛至决赛的全程赛事追踪。",
   metadataBase: new URL("http://localhost:3000"),
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/favicon.ico",
+  },
   applicationName: "CupOracle",
   appleWebApp: {
     capable: true,

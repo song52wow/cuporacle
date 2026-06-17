@@ -55,6 +55,18 @@ export default async function MatchDetailPage({
           <PredictionHero match={m} prediction={p} />
         </div>
 
+        {/* 阵容身价对比 - 第二模块，占满宽度 */}
+        {(detail.home_squad.length > 0 || detail.away_squad.length > 0) && (
+          <div className="mt-6">
+            <MarketValueCompare
+              homeName={m.home_team_name}
+              awayName={m.away_team_name}
+              homeSquad={detail.home_squad}
+              awaySquad={detail.away_squad}
+            />
+          </div>
+        )}
+
         {/* 主体网格 */}
         <div className="mt-6 grid gap-5 lg:grid-cols-3">
           {/* 左：核心 2 列 */}
@@ -108,16 +120,6 @@ export default async function MatchDetailPage({
               homeName={m.home_team_name}
               awayName={m.away_team_name}
             />
-
-            {/* 阵容身价对比 */}
-            {(detail.home_squad.length > 0 || detail.away_squad.length > 0) && (
-              <MarketValueCompare
-                homeName={m.home_team_name}
-                awayName={m.away_team_name}
-                homeSquad={detail.home_squad}
-                awaySquad={detail.away_squad}
-              />
-            )}
           </div>
 
           {/* 右：多模型对比 + 比赛信息 */}

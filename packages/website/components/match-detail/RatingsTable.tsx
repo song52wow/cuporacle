@@ -49,8 +49,8 @@ function RatingGroup({
       >
         {label}
       </div>
-      <div className="rounded-xl hairline overflow-hidden">
-        <table className="w-full text-xs">
+      <div className="rounded-xl hairline overflow-x-auto">
+        <table className="w-full text-xs min-w-[480px]">
           <thead className="bg-white/[0.03] text-white/50">
             <tr>
               <th className="text-left font-mono px-3 py-2">#</th>

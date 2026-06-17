@@ -70,7 +70,7 @@ export default async function MatchDetailPage({
         {/* 主体网格 */}
         <div className="mt-6 grid gap-5 lg:grid-cols-3">
           {/* 左：核心 2 列 */}
-          <div className="lg:col-span-2 space-y-5">
+          <div className="lg:col-span-2 space-y-5 min-w-0">
             {/* 比分分布 */}
             {p && p.score_distribution.length > 0 && (
               <div className="glass rounded-2xl p-5 sm:p-6">

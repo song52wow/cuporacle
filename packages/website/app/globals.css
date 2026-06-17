@@ -17,6 +17,8 @@ body {
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* 移动端兜底：禁止任何子元素（装饰球 / 表格 / 长内容）触发横向滚动条 */
+  overflow-x: clip;
 }
 
 body {

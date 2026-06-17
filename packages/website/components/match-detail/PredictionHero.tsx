@@ -40,19 +40,20 @@ export function PredictionHero({
         </div>
 
         {/* 对阵 */}
-        <div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-6">
+        <div className="mt-6 flex items-center gap-3 sm:gap-4">
           <TeamSide
+            className="flex-1"
             name={match.home_team_name}
             isHome
             score={match.home_score}
             finished={isFinished}
             xg={prediction?.expected_goals_home}
           />
-          <div className="text-center px-2">
+          <div className="text-center px-1 shrink-0">
             {isFinished ? (
-              <div className="text-5xl sm:text-6xl font-mono font-bold tracking-tight text-white">
+              <div className="text-4xl sm:text-6xl font-mono font-bold tracking-tight text-white">
                 {match.home_score}
-                <span className="text-white/30 mx-2">:</span>
+                <span className="text-white/30 mx-1 sm:mx-2">:</span>
                 {match.away_score}
               </div>
             ) : (
@@ -65,6 +66,7 @@ export function PredictionHero({
             )}
           </div>
           <TeamSide
+            className="flex-1"
             name={match.away_team_name}
             isHome={false}
             score={match.away_score}
@@ -146,21 +148,23 @@ function TeamSide({
   score,
   finished,
   xg,
+  className = "",
 }: {
   name: string;
   isHome: boolean;
   score: number | null;
   finished: boolean;
   xg?: number;
+  className?: string;
 }) {
   return (
     <div
-      className={`flex items-center gap-3 sm:gap-4 ${
+      className={`flex items-center gap-3 sm:gap-4 min-w-0 ${className} ${
         isHome ? "" : "flex-row-reverse text-right"
       }`}
     >
       <TeamFlag name={name} size="xl" />
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="text-base sm:text-xl font-semibold text-white tracking-tight truncate">
           {name}
         </div>

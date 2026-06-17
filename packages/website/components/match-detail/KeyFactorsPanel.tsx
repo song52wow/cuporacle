@@ -29,7 +29,7 @@ export function KeyFactorsPanel({ prediction }: { prediction: PredictionResponse
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="grid grid-cols-[100px_1fr_auto] items-center gap-3"
+              className="grid grid-cols-[100px_minmax(0,1fr)_auto] items-center gap-3"
             >
               <span
                 className={cn(

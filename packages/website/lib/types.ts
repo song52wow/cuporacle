@@ -136,9 +136,45 @@ export interface MatchDetailResponse {
   home_form: Record<string, unknown> | null;
   away_form: Record<string, unknown> | null;
   h2h: Record<string, unknown>[];
-  home_squad: Record<string, unknown>[];
-  away_squad: Record<string, unknown>[];
+  home_squad: Player[];
+  away_squad: Player[];
   home_ratings: PlayerRating[];
   away_ratings: PlayerRating[];
   prediction_status: Record<string, string>;
+}
+
+// ─── Players ───────────────────────────────────────────────────
+export interface Player {
+  id: string;
+  fullName: string;
+  position: "Goalkeeper" | "Defender" | "Midfielder" | "Forward";
+  image: string | null;
+  age: number;
+  citizenship: string;
+  teamId: string;
+  teamName: string;
+  marketValue: {
+    valueM: number;
+    display: string;
+  } | null;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  shortName: string;
+  abbreviation: string;
+  logo: string;
+  slug: string;
+  color: string;
+}
+
+export interface TeamListResponse {
+  teams: Team[];
+  total: number;
+}
+
+export interface TeamDetailResponse {
+  team: Team;
+  players: Player[];
 }

@@ -6,8 +6,8 @@
 
 import type {
   Match, MatchDetailResponse, MatchListResponse, ModelResult,
-  PlayerRating, PredictionBundle, PredictionResponse, ScoreDistributionItem,
-  Tournament, KeyFactor, KeyPlayer,
+  Player, PlayerRating, PredictionBundle, PredictionResponse, ScoreDistributionItem,
+  Team, TeamDetailResponse, TeamListResponse, Tournament, KeyFactor, KeyPlayer,
 } from "./types";
 
 // ─── D1 row types (raw 形状,跟表 schema 一一对应) ───────────────────────
@@ -245,8 +245,8 @@ export async function getMatchDetail(
     home_form: (homeForm as unknown as Record<string, unknown>) ?? null,
     away_form: (awayForm as unknown as Record<string, unknown>) ?? null,
     h2h: h2h ? safeArr<Record<string, unknown>>(h2h.matches_json) : [],
-    home_squad: homeSquad ? safeArr<Record<string, unknown>>(homeSquad.squad_json) : [],
-    away_squad: awaySquad ? safeArr<Record<string, unknown>>(awaySquad.squad_json) : [],
+    home_squad: getPlayersByTeamName(m.home_team_name),
+    away_squad: getPlayersByTeamName(m.away_team_name),
     home_ratings: (homeRatings.results as PlayerRating[]),
     away_ratings: (awayRatings.results as PlayerRating[]),
     prediction_status: Object.fromEntries(pmStats.results.map((s) => [s.provider, s.status])),
@@ -301,4 +301,106 @@ export async function getPredictionBundle(
     primary: primaryResponse,
     models: models.results.map(rowToModelResult),
   };
+}
+
+// ─── Players (from JSON files) ─────────────────────────────────
+// 球员数据存储在 JSON 文件中，通过静态导入读取
+import worldcupPlayers from "./data/world-cup-players.json";
+import worldcupTeams from "./data/world-cup-teams.json";
+
+export async function getTeams(): Promise<TeamListResponse> {
+  const teamsData = worldcupTeams as { teams: Array<{ id: string; name: string; shortName: string; abbreviation: string; logo: string; slug: string; color: string }> };
+  const teams: Team[] = teamsData.teams.map((t) => ({
+    id: t.id,
+    name: t.name,
+    shortName: t.shortName,
+    abbreviation: t.abbreviation,
+    logo: t.logo,
+    slug: t.slug,
+    color: t.color,
+  }));
+  return { teams, total: teams.length };
+}
+
+export async function getTeamDetail(slug: string): Promise<TeamDetailResponse | null> {
+  const teamsData = worldcupTeams as { teams: Array<{ id: string; name: string; shortName: string; abbreviation: string; logo: string; slug: string; color: string }> };
+  const teamData = teamsData.teams.find((t) => t.slug === slug);
+  if (!teamData) return null;
+
+  const team: Team = {
+    id: teamData.id,
+    name: teamData.name,
+    shortName: teamData.shortName,
+    abbreviation: teamData.abbreviation,
+    logo: teamData.logo,
+    slug: teamData.slug,
+    color: teamData.color,
+  };
+
+  // 获取该队球员
+  const playersData = worldcupPlayers as Record<string, { players: Array<{ id: string; fullName: string; position: string; image: string | null; age: number; citizenship: string; teamId: string; teamName: string; marketValue: { valueM: number; display: string } | null }> }>;
+  const teamPlayers = playersData[slug]?.players ?? [];
+  const players: Player[] = teamPlayers.map((p) => ({
+    id: p.id,
+    fullName: p.fullName,
+    position: p.position as Player["position"],
+    image: p.image,
+    age: p.age,
+    citizenship: p.citizenship,
+    teamId: p.teamId,
+    teamName: p.teamName,
+    marketValue: p.marketValue,
+  }));
+
+  return { team, players };
+}
+
+export async function getTeamPlayers(slug: string): Promise<Player[]> {
+  const playersData = worldcupPlayers as Record<string, { players: Array<{ id: string; fullName: string; position: string; image: string | null; age: number; citizenship: string; teamId: string; teamName: string; marketValue: { valueM: number; display: string } | null }> }>;
+  const teamPlayers = playersData[slug]?.players ?? [];
+  return teamPlayers.map((p) => ({
+    id: p.id,
+    fullName: p.fullName,
+    position: p.position as Player["position"],
+    image: p.image,
+    age: p.age,
+    citizenship: p.citizenship,
+    teamId: p.teamId,
+    teamName: p.teamName,
+    marketValue: p.marketValue,
+  }));
+}
+
+// 根据 teamId 从 teams JSON 中查找 slug
+function getSlugByTeamId(teamId: string): string | null {
+  const teamsData = worldcupTeams as { teams: Array<{ id: string; slug: string }> };
+  const team = teamsData.teams.find((t) => t.id === teamId);
+  return team?.slug ?? null;
+}
+
+// 根据 team name 从 teams JSON 中查找 slug
+function getSlugByTeamName(teamName: string): string | null {
+  const teamsData = worldcupTeams as { teams: Array<{ name: string; slug: string }> };
+  const team = teamsData.teams.find((t) => t.name === teamName);
+  return team?.slug ?? null;
+}
+
+// 根据 team name 获取球员列表
+function getPlayersByTeamName(teamName: string): Player[] {
+  const slug = getSlugByTeamName(teamName);
+  if (!slug) return [];
+
+  const playersData = worldcupPlayers as Record<string, { players: Array<{ id: string; fullName: string; position: string; image: string | null; age: number; citizenship: string; teamId: string; teamName: string; marketValue: { valueM: number; display: string } | null }> }>;
+  const teamPlayers = playersData[slug]?.players ?? [];
+  return teamPlayers.map((p) => ({
+    id: p.id,
+    fullName: p.fullName,
+    position: p.position as Player["position"],
+    image: p.image,
+    age: p.age,
+    citizenship: p.citizenship,
+    teamId: p.teamId,
+    teamName: p.teamName,
+    marketValue: p.marketValue,
+  }));
 }

@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
 import { NotificationBell } from "@/components/NotificationBell";
 import { cn } from "@/lib/utils";
-import { Activity, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 
 const NAV = [
   { href: "/", label: "首页" },
   { href: "/matches", label: "赛事" },
+  { href: "/teams", label: "队伍" },
 ];
 
 export function SiteHeader() {

@@ -8,6 +8,7 @@ import {
   KeyPlayersPanel,
 } from "@/components/match-detail/KeyFactorsPanel";
 import { ModelComparison } from "@/components/match-detail/ModelComparison";
+import { SquadPanel } from "@/components/match-detail/SquadPanel";
 
 // Cloudflare Pages / Workers 要求显式声明 Edge Runtime
 export const runtime = "edge";
@@ -107,6 +108,22 @@ export default async function MatchDetailPage({
               homeName={m.home_team_name}
               awayName={m.away_team_name}
             />
+
+            {/* 主队阵容 */}
+            {detail.home_squad.length > 0 && (
+              <SquadPanel
+                players={detail.home_squad}
+                teamName={m.home_team_name}
+              />
+            )}
+
+            {/* 客队阵容 */}
+            {detail.away_squad.length > 0 && (
+              <SquadPanel
+                players={detail.away_squad}
+                teamName={m.away_team_name}
+              />
+            )}
           </div>
 
           {/* 右：多模型对比 + 比赛信息 */}

@@ -11,7 +11,10 @@ import {
 import type {
   MatchDetailResponse,
   MatchListResponse,
+  Player,
   PredictionBundle,
+  TeamDetailResponse,
+  TeamListResponse,
   Tournament,
 } from "./types";
 
@@ -76,6 +79,24 @@ export async function getMatchDetail(id: string): Promise<MatchDetailResponse | 
 export async function getPrediction(id: string): Promise<PredictionBundle | null> {
   const data = await safeFetch<PredictionBundle>(`/api/predictions/${id}`);
   return data ?? mockPredictionBundle(id);
+}
+
+// ─── Teams & Players ────────────────────────────────────────────
+export async function getTeams(): Promise<TeamListResponse> {
+  const data = await safeFetch<TeamListResponse>("/api/teams");
+  if (data) return data;
+  // Mock fallback: 返回空列表
+  return { teams: [], total: 0 };
+}
+
+export async function getTeamDetail(slug: string): Promise<TeamDetailResponse | null> {
+  const data = await safeFetch<TeamDetailResponse>(`/api/teams/${slug}`);
+  return data;
+}
+
+export async function getTeamPlayers(slug: string): Promise<Player[]> {
+  const data = await safeFetch<{ players: Player[]; total: number }>(`/api/teams/${slug}/players`);
+  return data?.players ?? [];
 }
 
 export const API_BASE = BASE_OR_MOCK;

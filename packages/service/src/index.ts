@@ -4,7 +4,7 @@
 
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { getMatchDetail, getMatches, getPredictionBundle, getTournament } from "./db";
+import { getMatchDetail, getMatches, getPredictionBundle, getTournament, getTeams, getTeamDetail, getTeamPlayers } from "./db";
 import { pushRoutes } from "./push-handlers";
 import type { MatchStatus } from "./types";
 
@@ -63,6 +63,9 @@ app.get("/api", (c) =>
       "GET /api/matches?status=SCHEDULED|TIMED|IN_PLAY|FINISHED",
       "GET /api/matches/:id",
       "GET /api/predictions/:id",
+      "GET /api/teams",
+      "GET /api/teams/:slug",
+      "GET /api/teams/:slug/players",
     ],
   })
 );
@@ -90,6 +93,25 @@ app.get("/api/predictions/:id", async (c) => {
   const bundle = await getPredictionBundle(c.env.DB, id);
   if (!bundle) return c.json({ error: "predictions not found" }, 404);
   return c.json(bundle);
+});
+
+// ─── Teams & Players ────────────────────────────────────────────
+// 所有队伍列表
+app.get("/api/teams", async (c) => c.json(await getTeams()));
+
+// 队伍详情（含球员列表）
+app.get("/api/teams/:slug", async (c) => {
+  const slug = c.req.param("slug");
+  const detail = await getTeamDetail(slug);
+  if (!detail) return c.json({ error: "team not found" }, 404);
+  return c.json(detail);
+});
+
+// 队伍球员列表
+app.get("/api/teams/:slug/players", async (c) => {
+  const slug = c.req.param("slug");
+  const players = await getTeamPlayers(slug);
+  return c.json({ players, total: players.length });
 });
 
 // ─── 内部端点:从本地 admin SQLite 同步数据到 D1 ───────────────────────

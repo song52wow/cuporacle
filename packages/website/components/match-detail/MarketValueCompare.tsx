@@ -60,7 +60,7 @@ export function MarketValueCompare({
           {/* 主队 */}
           <div className="flex items-center justify-between">
             <span className="text-sm text-white/70">{homeName}</span>
-            <span className="text-sm font-mono text-emerald-400">
+            <span className="text-sm font-mono text-cyan-400">
               {formatValue(homeTotal)}
             </span>
           </div>

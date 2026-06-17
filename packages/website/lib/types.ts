@@ -167,6 +167,8 @@ export interface Team {
   logo: string;
   slug: string;
   color: string;
+  totalMarketValue: number;
+  totalMarketValueDisplay: string;
 }
 
 export interface TeamListResponse {

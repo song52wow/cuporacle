@@ -61,6 +61,9 @@ export default async function TeamsPage() {
                   <span className="text-xs text-white/50 font-mono">
                     {team.abbreviation}
                   </span>
+                  <span className="text-xs font-mono text-emerald-400/80 mt-1">
+                    {team.totalMarketValueDisplay}
+                  </span>
                 </div>
               </Link>
             ))}

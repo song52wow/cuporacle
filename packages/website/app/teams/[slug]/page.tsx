@@ -58,9 +58,14 @@ export default async function TeamDetailPage({
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
               {team.name}
             </h1>
-            <p className="text-white/60 text-lg mt-1">
-              {players.length} 名球员
-            </p>
+            <div className="flex items-center gap-4 mt-1">
+              <p className="text-white/60 text-lg">
+                {players.length} 名球员
+              </p>
+              <p className="text-emerald-400 text-lg font-mono">
+                总身价: {team.totalMarketValueDisplay}
+              </p>
+            </div>
           </div>
         </div>
 

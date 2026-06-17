@@ -308,17 +308,38 @@ export async function getPredictionBundle(
 import worldcupPlayers from "./data/world-cup-players.json";
 import worldcupTeams from "./data/world-cup-teams.json";
 
+// 计算队伍总身价
+function calculateTeamTotalMarketValue(slug: string): { value: number; display: string } {
+  const playersData = worldcupPlayers as Record<string, { players: Array<{ marketValue: { valueM: number } | null }> }>;
+  const teamPlayers = playersData[slug]?.players ?? [];
+  const totalValue = teamPlayers.reduce((sum, p) => sum + (p.marketValue?.valueM ?? 0), 0);
+
+  // 格式化显示
+  if (totalValue >= 1000) {
+    return { value: totalValue, display: `€${(totalValue / 1000).toFixed(2)}b` };
+  } else if (totalValue >= 1) {
+    return { value: totalValue, display: `€${totalValue.toFixed(1)}m` };
+  } else {
+    return { value: totalValue, display: `€${(totalValue * 1000).toFixed(0)}k` };
+  }
+}
+
 export async function getTeams(): Promise<TeamListResponse> {
   const teamsData = worldcupTeams as { teams: Array<{ id: string; name: string; shortName: string; abbreviation: string; logo: string; slug: string; color: string }> };
-  const teams: Team[] = teamsData.teams.map((t) => ({
-    id: t.id,
-    name: t.name,
-    shortName: t.shortName,
-    abbreviation: t.abbreviation,
-    logo: t.logo,
-    slug: t.slug,
-    color: t.color,
-  }));
+  const teams: Team[] = teamsData.teams.map((t) => {
+    const totalMarketValue = calculateTeamTotalMarketValue(t.slug);
+    return {
+      id: t.id,
+      name: t.name,
+      shortName: t.shortName,
+      abbreviation: t.abbreviation,
+      logo: t.logo,
+      slug: t.slug,
+      color: t.color,
+      totalMarketValue: totalMarketValue.value,
+      totalMarketValueDisplay: totalMarketValue.display,
+    };
+  });
   return { teams, total: teams.length };
 }
 
@@ -327,6 +348,7 @@ export async function getTeamDetail(slug: string): Promise<TeamDetailResponse | 
   const teamData = teamsData.teams.find((t) => t.slug === slug);
   if (!teamData) return null;
 
+  const totalMarketValue = calculateTeamTotalMarketValue(slug);
   const team: Team = {
     id: teamData.id,
     name: teamData.name,
@@ -335,6 +357,8 @@ export async function getTeamDetail(slug: string): Promise<TeamDetailResponse | 
     logo: teamData.logo,
     slug: teamData.slug,
     color: teamData.color,
+    totalMarketValue: totalMarketValue.value,
+    totalMarketValueDisplay: totalMarketValue.display,
   };
 
   // 获取该队球员

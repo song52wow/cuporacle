@@ -9,6 +9,7 @@ import {
 } from "@/components/match-detail/KeyFactorsPanel";
 import { ModelComparison } from "@/components/match-detail/ModelComparison";
 import { SquadPanel } from "@/components/match-detail/SquadPanel";
+import { MarketValueCompare } from "@/components/match-detail/MarketValueCompare";
 
 // Cloudflare Pages / Workers 要求显式声明 Edge Runtime
 export const runtime = "edge";
@@ -126,12 +127,22 @@ export default async function MatchDetailPage({
             )}
           </div>
 
-          {/* 右：多模型对比 + 比赛信息 */}
+          {/* 右：多模型对比 + 身价对比 + 比赛信息 */}
           <div className="space-y-5">
             {prediction && (
               <ModelComparison
                 primary={prediction.primary?.llm_provider ?? ""}
                 models={prediction.models}
+              />
+            )}
+
+            {/* 阵容身价对比 */}
+            {(detail.home_squad.length > 0 || detail.away_squad.length > 0) && (
+              <MarketValueCompare
+                homeName={m.home_team_name}
+                awayName={m.away_team_name}
+                homeSquad={detail.home_squad}
+                awaySquad={detail.away_squad}
               />
             )}
 

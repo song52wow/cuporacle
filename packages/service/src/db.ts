@@ -314,14 +314,8 @@ function calculateTeamTotalMarketValue(slug: string): { value: number; display: 
   const teamPlayers = playersData[slug]?.players ?? [];
   const totalValue = teamPlayers.reduce((sum, p) => sum + (p.marketValue?.valueM ?? 0), 0);
 
-  // 格式化显示
-  if (totalValue >= 1000) {
-    return { value: totalValue, display: `€${(totalValue / 1000).toFixed(2)}b` };
-  } else if (totalValue >= 1) {
-    return { value: totalValue, display: `€${totalValue.toFixed(1)}m` };
-  } else {
-    return { value: totalValue, display: `€${(totalValue * 1000).toFixed(0)}k` };
-  }
+  // 统一格式：€XXXm
+  return { value: totalValue, display: `€${totalValue.toFixed(1)}m` };
 }
 
 export async function getTeams(): Promise<TeamListResponse> {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { MatchCard } from "@/components/MatchCard";
 import type { Match, PredictionBundle } from "@/lib/types";
@@ -23,22 +23,26 @@ interface Props {
 }
 
 export function MatchesExplorer({ matches, predictions }: Props) {
-  const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const [status, setStatus] = useState<StatusFilter>("ALL");
   const [group, setGroup] = useState<GroupFilter>("ALL");
   const [q, setQ] = useState("");
 
-  // 初始化自 query string
+  // 初始化自 URL hash
   useEffect(() => {
-    const s = params.get("status");
-    if (s === "TIMED" || s === "FINISHED" || s === "IN_PLAY" || s === "ALL") {
-      setStatus(s);
-    } else {
-      setStatus("ALL");
+    function parseHash() {
+      const h = window.location.hash.replace(/^#/, "").toUpperCase();
+      if (h === "TIMED" || h === "FINISHED" || h === "IN_PLAY" || h === "ALL") {
+        setStatus(h);
+      } else {
+        setStatus("ALL");
+      }
     }
-  }, [params]);
+    parseHash();
+    window.addEventListener("hashchange", parseHash);
+    return () => window.removeEventListener("hashchange", parseHash);
+  }, []);
 
   const groups = useMemo(() => {
     const g = new Set<string>();
@@ -83,10 +87,7 @@ export function MatchesExplorer({ matches, predictions }: Props) {
 
   function handleStatus(s: StatusFilter) {
     setStatus(s);
-    const q = new URLSearchParams();
-    if (s !== "ALL") q.set("status", s);
-    const qs = q.toString();
-    router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+    router.replace(`${pathname}#${s === "ALL" ? "" : s}`, { scroll: false });
   }
 
   return (

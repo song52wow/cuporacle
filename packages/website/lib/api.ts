@@ -41,8 +41,10 @@ async function safeFetch<T>(path: string): Promise<T | null> {
   try {
     const res = await fetch(url, {
       // 10s 超时，D1 冷启动可能较慢
-      // 注意:不能加 cache: "no-store"，CF Pages Edge Runtime 不支持该字段
+      // 禁止 SSR 缓存，确保比赛状态实时更新（如赛后同步比分）
+      // 使用 next.revalidate 代替 cache:"no-store"，兼容 CF Pages Edge Runtime
       signal: AbortSignal.timeout(10000),
+      next: { revalidate: 0 },
     });
     if (!res.ok) return null;
     return (await res.json()) as T;

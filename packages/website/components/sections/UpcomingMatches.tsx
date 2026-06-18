@@ -52,7 +52,7 @@ export async function UpcomingMatches() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {upcoming.map((m, i) => (
-            <MatchCard key={m.id} match={m} prediction={preds[i]} index={i} />
+            <MatchCard key={m.id} match={m} prediction={preds[i]} />
           ))}
         </div>
       )}

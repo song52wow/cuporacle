@@ -188,12 +188,11 @@ export function MatchesExplorer({ matches, predictions }: Props) {
       {/* 列表 */}
       {filtered.length > 0 ? (
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((m, i) => (
+          {filtered.map((m) => (
             <MatchCard
               key={m.id}
               match={m}
               prediction={predictions[m.id]}
-              index={i}
             />
           ))}
         </div>

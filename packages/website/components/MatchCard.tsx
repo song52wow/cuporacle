@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Calendar, MapPin, Sparkles } from "lucide-react";
 import { TeamFlag } from "./TeamFlag";
 import { WinProbBar } from "./WinProbBar";
@@ -20,24 +19,18 @@ const STAGE_LABEL: Record<string, string> = {
 interface Props {
   match: Match;
   prediction?: PredictionBundle | null;
-  index?: number;
 }
 
-export function MatchCard({ match, prediction, index = 0 }: Props) {
+export function MatchCard({ match, prediction }: Props) {
   const p = prediction?.primary;
   const hasP = !!p;
   const isFinished = match.status === "FINISHED";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.03 }}
+    <Link
+      href={`/matches/${match.id}`}
+      className="group block relative glass rounded-2xl p-5 hover:ring-1 hover:ring-cyan-400/40 transition-all duration-300 hover:-translate-y-0.5"
     >
-      <Link
-        href={`/matches/${match.id}`}
-        className="group block relative glass rounded-2xl p-5 hover:ring-1 hover:ring-cyan-400/40 transition-all duration-300 hover:-translate-y-0.5"
-      >
         {/* 顶部 meta */}
         <div className="flex items-center justify-between text-[11px]">
           <div className="flex items-center gap-2 text-white/55">
@@ -121,6 +114,5 @@ export function MatchCard({ match, prediction, index = 0 }: Props) {
         {/* hover 描边 */}
         <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/0 group-hover:ring-cyan-400/30 transition" />
       </Link>
-    </motion.div>
   );
 }

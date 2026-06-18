@@ -41,7 +41,7 @@ export async function UpcomingMatches() {
           href="/matches"
           className="hidden sm:inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white"
         >
-          查看全部
+          查看即将开赛
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
@@ -61,7 +61,7 @@ export async function UpcomingMatches() {
           href="/matches"
           className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white"
         >
-          查看全部赛事 <ArrowRight className="w-4 h-4" />
+          查看即将开赛 <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
     </section>

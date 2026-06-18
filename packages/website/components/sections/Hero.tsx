@@ -74,19 +74,19 @@ export function Hero() {
               className="mt-8 flex flex-col sm:flex-row gap-3"
             >
               <Link
-                href="/matches"
-                className="group inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-cyan-violet text-ink-950 font-semibold text-sm shadow-neon hover:brightness-110 transition"
-              >
-                <Trophy className="w-4 h-4" />
-                查看全部赛事
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
-              </Link>
-              <Link
                 href="/matches?status=TIMED"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full glass text-white/85 font-medium text-sm hover:text-white"
+                className="group inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-cyan-violet text-ink-950 font-semibold text-sm shadow-neon hover:brightness-110 transition"
               >
                 <Sparkles className="w-4 h-4" />
                 关注即将开赛
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
+              </Link>
+              <Link
+                href="/matches"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full glass text-white/85 font-medium text-sm hover:text-white"
+              >
+                <Trophy className="w-4 h-4" />
+                查看全部赛事
               </Link>
             </motion.div>
 

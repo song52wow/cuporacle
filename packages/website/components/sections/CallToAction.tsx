@@ -18,7 +18,7 @@ export function CallToAction() {
               <span className="text-gradient-cyan-violet">AI 怎么看？</span>
             </h2>
             <p className="mt-4 text-sm sm:text-base text-white/60 max-w-lg">
-              浏览 104 场赛事的完整预测、关键因素与多模型对比，找到属于你的判断。
+              浏览全部赛事的完整预测、关键因素与多模型对比，找到属于你的判断。
             </p>
           </div>
           <div className="flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-end">

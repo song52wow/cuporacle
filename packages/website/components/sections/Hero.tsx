@@ -1,11 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Activity, BarChart3, Trophy } from "lucide-react";
 import { TeamFlag } from "@/components/TeamFlag";
 
+// 2026 世界杯决赛开球时间（UTC）：7月19日 20:00 = 北京时间 7月20日 04:00
+const FINAL_KICKOFF = new Date("2026-07-19T20:00:00Z");
+
+function daysUntil(target: Date): number {
+  return Math.max(0, Math.ceil((target.getTime() - Date.now()) / 86_400_000));
+}
+
 export function Hero() {
+  // SSR 阶段不计算天数,避免水合不匹配；挂载后每 60 分钟刷新一次
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
+
+  useEffect(() => {
+    setDaysLeft(daysUntil(FINAL_KICKOFF));
+    const id = setInterval(() => setDaysLeft(daysUntil(FINAL_KICKOFF)), 60 * 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
   return (
     <section className="relative overflow-hidden">
       {/* 装饰：网格 + 光晕 */}
@@ -27,7 +43,7 @@ export function Hero() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-glow" />
               <span className="text-emerald-300/90">LIVE</span>
               <span className="text-white/40">·</span>
-              <span className="text-white/70">2026 美加墨世界杯 · 距开幕 12 天</span>
+              <span className="text-white/70">2026 美加墨世界杯 · 决赛 7月20日 · 剩 {daysLeft ?? "—"} 天</span>
             </motion.div>
 
             <motion.h1
@@ -47,7 +63,7 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mt-6 text-base sm:text-lg text-white/65 max-w-xl leading-relaxed"
             >
-              汇总 4 家主流大模型的判断，给出 104 场比赛的胜平负概率、最可能比分与关键因素。
+              汇总多家主流大模型的判断，给出每场比赛的胜平负概率、最可能比分与关键因素。
               从小组赛到决赛，<span className="text-white">每一次判断都有迹可循</span>。
             </motion.p>
 
@@ -198,7 +214,7 @@ export function Hero() {
             >
               <div className="flex items-center gap-2 text-[11px] font-mono">
                 <BarChart3 className="w-3.5 h-3.5 text-violet-300" />
-                <span className="text-white/60">4 / 4 模型</span>
+                <span className="text-white/60">全部模型</span>
                 <span className="text-emerald-300/90">已就绪</span>
               </div>
             </motion.div>

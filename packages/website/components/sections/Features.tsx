@@ -16,7 +16,7 @@ const FEATURES = [
   {
     icon: Layers,
     title: "全程赛事追踪",
-    desc: "小组赛 64 场 + 淘汰赛 40 场，状态、xG、置信度实时同步，一站式查看。",
+    desc: "状态、xG、置信度实时同步，从小组赛到决赛一站式查看。",
     accent: "from-emerald-400/30 to-emerald-500/0",
   },
 ];

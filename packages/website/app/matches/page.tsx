@@ -7,7 +7,7 @@ export const runtime = "edge";
 
 export const metadata = {
   title: "全部赛事 · CupOracle",
-  description: "浏览 2026 世界杯全部 104 场比赛的 AI 预测与状态。",
+  description: "浏览 2026 世界杯全部赛事的 AI 预测与状态。",
 };
 
 export default async function MatchesPage() {
@@ -39,7 +39,7 @@ export default async function MatchesPage() {
             全部 <span className="text-gradient-cyan-violet">赛事</span>
           </h1>
           <p className="mt-3 text-sm text-white/55 max-w-xl">
-            覆盖小组赛 64 场到决赛，共 104 场赛事。支持状态、分组与球队搜索。
+            覆盖从小组赛到决赛的全部赛事。支持状态、分组与球队搜索。
           </p>
         </div>
         <Suspense fallback={null}>

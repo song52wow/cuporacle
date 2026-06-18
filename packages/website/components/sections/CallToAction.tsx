@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export function CallToAction() {
   return (
@@ -9,10 +9,7 @@ export function CallToAction() {
         <div className="pointer-events-none absolute -bottom-24 -left-16 w-[360px] h-[360px] rounded-full bg-violet-500/30 blur-3xl" />
         <div className="relative grid lg:grid-cols-[1.4fr_1fr] gap-8 items-center">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-mono tracking-widest text-cyan-300/80 uppercase">
-              <Zap className="w-3 h-3" /> ready to dive in
-            </div>
-            <h2 className="mt-3 text-3xl sm:text-5xl font-semibold tracking-tight text-white text-balance">
+            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white text-balance">
               下一场比赛的胜负
               <br />
               <span className="text-gradient-cyan-violet">AI 怎么看？</span>

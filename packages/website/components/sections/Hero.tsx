@@ -97,9 +97,6 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="mt-10 flex flex-wrap items-center gap-2"
             >
-              <span className="text-[11px] font-mono tracking-widest text-white/40 uppercase">
-                集成模型
-              </span>
               {["MiMo-7B", "DeepSeek", "GLM-4", "MiniMax"].map((m) => (
                 <span
                   key={m}
@@ -119,11 +116,7 @@ export function Hero() {
             className="relative"
           >
             <div className="relative glass-strong rounded-3xl p-6 shadow-glass">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-white/55">// 焦点战</span>
-                <span className="text-cyan-300/90">04 模型共识</span>
-              </div>
-              <div className="mt-4 flex items-center gap-3">
+              <div className="flex items-center gap-3">
                 <TeamFlag name="巴西" size="md" className="rounded-lg" />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-white truncate">巴西</div>

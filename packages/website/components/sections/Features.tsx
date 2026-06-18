@@ -1,4 +1,4 @@
-import { Brain, Radar, Layers, Sparkles } from "lucide-react";
+import { Brain, Radar, Layers } from "lucide-react";
 
 const FEATURES = [
   {
@@ -25,10 +25,7 @@ export function Features() {
   return (
     <section className="relative mx-auto max-w-7xl px-4 sm:px-6 mt-28">
       <div className="text-center max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-1.5 text-[11px] font-mono tracking-widest text-violet-300/80 uppercase">
-          <Sparkles className="w-3 h-3" /> why cuporacle
-        </div>
-        <h2 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-white text-balance">
+        <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white text-balance">
           不止是预测，更是<span className="text-gradient-cyan-violet">决策辅助</span>
         </h2>
         <p className="mt-3 text-sm text-white/55">

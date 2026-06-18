@@ -30,12 +30,8 @@ export default async function MatchesPage() {
       <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
       <div className="pointer-events-none absolute -top-20 right-0 w-[600px] h-[420px] rounded-full bg-violet-500/20 blur-[100px]" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-14 pb-20">
-        {/* Header */}
         <div className="mb-8">
-          <div className="text-[11px] font-mono tracking-widest text-cyan-300/80 uppercase">
-            // tournament
-          </div>
-          <h1 className="mt-2 text-3xl sm:text-5xl font-semibold tracking-tight text-white text-balance">
+          <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white text-balance">
             全部 <span className="text-gradient-cyan-violet">赛事</span>
           </h1>
           <p className="mt-3 text-sm text-white/55 max-w-xl">

@@ -1,8 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Sparkles, ChevronRight, TrendingUp } from "lucide-react";
-import type { Match, PredictionResponse } from "@/lib/types";
+import { Sparkles } from "lucide-react";
+import type { Match, PredictionResponse, ModelResult } from "@/lib/types";
 import { TeamFlag } from "@/components/TeamFlag";
 import { WinProbBar } from "@/components/WinProbBar";
 import { formatDate, topScore } from "@/lib/utils";
@@ -10,12 +9,28 @@ import { formatDate, topScore } from "@/lib/utils";
 export function PredictionHero({
   match,
   prediction,
+  activeModel,
 }: {
   match: Match;
   prediction: PredictionResponse | null;
+  activeModel?: ModelResult | null;
 }) {
+  // Use activeModel data if available, fall back to primary prediction
+  const p = (activeModel?.status === "ok"
+    ? {
+        ...prediction!,
+        win_prob: activeModel.win_prob ?? prediction?.win_prob ?? 0,
+        draw_prob: activeModel.draw_prob ?? prediction?.draw_prob ?? 0,
+        loss_prob: activeModel.loss_prob ?? prediction?.loss_prob ?? 0,
+        expected_goals_home: activeModel.expected_goals_home ?? prediction?.expected_goals_home ?? 0,
+        expected_goals_away: activeModel.expected_goals_away ?? prediction?.expected_goals_away ?? 0,
+        score_distribution: activeModel.score_distribution ?? prediction?.score_distribution ?? [],
+        llm_provider: activeModel.provider,
+        llm_model: activeModel.model,
+      }
+    : prediction);
   const isFinished = match.status === "FINISHED";
-  const top = prediction ? topScore(prediction.score_distribution) : null;
+  const top = p ? topScore(p.score_distribution) : null;
 
   return (
     <div className="relative glass-strong rounded-3xl p-6 sm:p-10 overflow-hidden">
@@ -85,13 +100,13 @@ export function PredictionHero({
                 </span>
               </div>
               <div className="text-[11px] font-mono text-white/45">
-                主模型 {prediction.llm_provider} · {prediction.llm_model}
+                {p?.llm_provider} · {p?.llm_model}
               </div>
             </div>
             <WinProbBar
-              win={prediction.win_prob}
-              draw={prediction.draw_prob}
-              loss={prediction.loss_prob}
+              win={p?.win_prob ?? 0}
+              draw={p?.draw_prob ?? 0}
+              loss={p?.loss_prob ?? 0}
               size="lg"
             />
             {top && (
@@ -113,14 +128,14 @@ export function PredictionHero({
         )}
 
         {/* xG 卡片 */}
-        {prediction && (
+        {p && (
           <div className="mt-6 grid grid-cols-3 gap-3">
-            <Stat label="xG (主)" value={prediction.expected_goals_home.toFixed(2)} />
-            <Stat label="xG (客)" value={prediction.expected_goals_away.toFixed(2)} />
+            <Stat label="xG (主)" value={p.expected_goals_home.toFixed(2)} />
+            <Stat label="xG (客)" value={p.expected_goals_away.toFixed(2)} />
             <Stat
               label="净胜预期"
-              value={(prediction.expected_goals_home - prediction.expected_goals_away).toFixed(2)}
-              positive={prediction.expected_goals_home > prediction.expected_goals_away}
+              value={(p.expected_goals_home - p.expected_goals_away).toFixed(2)}
+              positive={p.expected_goals_home > p.expected_goals_away}
             />
           </div>
         )}

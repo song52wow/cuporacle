@@ -12,7 +12,11 @@
     "tail": "wrangler tail",
     "typecheck": "tsc --noEmit",
     "sync": "node scripts/sync.mjs",
-    "sync:dry": "node scripts/sync.mjs --dry-run"
+    "sync:dry": "node scripts/sync.mjs --dry-run",
+    "rag:stats": "tsx migrations/seed-rag-corpora.ts --stats-only",
+    "rag:seed:local": "tsx migrations/seed-rag-corpora.ts --write-sqlite=./out/rag-test.sqlite --write-vectors",
+    "rag:seed:emit": "tsx migrations/seed-rag-corpora.ts --emit-sql=./out/rag-seed.sql --emit-vectors=./out/rag-vectors.jsonl",
+    "rag:init:d1": "wrangler d1 execute DB --local --file=migrations/0005_rag_init.sql"
   },
   "dependencies": {
     "hono": "^4.6.14",
@@ -22,6 +26,7 @@
     "@cloudflare/workers-types": "^4.20241224.0",
     "@types/web-push": "^3.6.4",
     "better-sqlite3": "^12.10.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.0",
     "wrangler": "^3.114.17"
   },

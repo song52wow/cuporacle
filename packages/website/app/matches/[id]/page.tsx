@@ -2,12 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Quote, BookOpen, MapPin } from "lucide-react";
 import { getMatchDetail, getPrediction } from "@/lib/api";
-import { PredictionHero } from "@/components/match-detail/PredictionHero";
+import { PredictionSection } from "@/components/match-detail/PredictionSection";
 import {
   KeyFactorsPanel,
   KeyPlayersPanel,
 } from "@/components/match-detail/KeyFactorsPanel";
-import { ModelComparison } from "@/components/match-detail/ModelComparison";
 import { MarketValueCompare } from "@/components/match-detail/MarketValueCompare";
 
 // Cloudflare Pages / Workers 要求显式声明 Edge Runtime
@@ -50,9 +49,9 @@ export default async function MatchDetailPage({
           返回赛事列表
         </Link>
 
-        {/* Hero 预测 */}
+        {/* Hero 预测 + 多模型对比（客户端交互） */}
         <div className="mt-6">
-          <PredictionHero match={m} prediction={p} />
+          <PredictionSection match={m} prediction={prediction} />
         </div>
 
         {/* 阵容身价对比 - 第二模块，占满宽度 */}
@@ -122,15 +121,8 @@ export default async function MatchDetailPage({
             />
           </div>
 
-          {/* 右：多模型对比 + 比赛信息 */}
+          {/* 右：比赛信息 */}
           <div className="space-y-5">
-            {prediction && (
-              <ModelComparison
-                primary={prediction.primary?.llm_provider ?? ""}
-                models={prediction.models}
-              />
-            )}
-
             {/* 比赛元信息 */}
             <div className="glass rounded-2xl p-5 sm:p-6">
               <div className="flex items-center gap-2 mb-4 text-white">

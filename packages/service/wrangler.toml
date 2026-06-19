@@ -28,5 +28,12 @@ binding = "DB"
 database_name = "cuporacle"
 database_id = "7e4b4248-f9e6-4c10-a03f-0fed2e7cf4c3"
 
+# Stage 1 RAG 知识库 — Vectorize 向量索引
+# 创建命令: wrangler vectorize create cuporacle-rag --dimensions=1024 --metric=cosine
+# index id 创建后填到下面
+[[vectorize]]
+binding = "VECTOR"
+index_name = "cuporacle-rag"
+
 [observability]
 enabled = true

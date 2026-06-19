@@ -6,11 +6,12 @@ import type { ModelResult } from "@/lib/types";
 import { cn, formatPct } from "@/lib/utils";
 
 interface Props {
-  primary: string;
   models: ModelResult[];
+  selectedProvider?: string;
+  onSelect?: (provider: string) => void;
 }
 
-export function ModelComparison({ primary, models }: Props) {
+export function ModelComparison({ models, selectedProvider, onSelect }: Props) {
   return (
     <div className="glass rounded-2xl p-5 sm:p-6">
       <div className="flex items-center justify-between mb-4">
@@ -32,8 +33,9 @@ export function ModelComparison({ primary, models }: Props) {
           <ModelRow
             key={m.provider}
             model={m}
-            isPrimary={m.provider === primary}
+            isSelected={m.provider === selectedProvider}
             delay={i * 0.05}
+            onClick={onSelect ? () => onSelect(m.provider) : undefined}
           />
         ))}
       </div>
@@ -46,12 +48,14 @@ export function ModelComparison({ primary, models }: Props) {
 
 function ModelRow({
   model,
-  isPrimary,
+  isSelected,
   delay,
+  onClick,
 }: {
   model: ModelResult;
-  isPrimary: boolean;
+  isSelected: boolean;
   delay: number;
+  onClick?: () => void;
 }) {
   const ok = model.status === "ok";
   const max = Math.max(model.win_prob ?? 0, model.draw_prob ?? 0, model.loss_prob ?? 0);
@@ -60,9 +64,13 @@ function ModelRow({
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
+      onClick={onClick}
       className={cn(
         "rounded-xl p-3 hairline transition",
-        isPrimary ? "bg-cyan-400/[0.04] border-cyan-400/30" : "bg-white/[0.02] hover:bg-white/[0.04]"
+        onClick && "cursor-pointer",
+        isSelected
+          ? "bg-cyan-400/[0.06] border-cyan-400/30 ring-1 ring-cyan-400/30"
+          : "bg-white/[0.02] hover:bg-white/[0.04]"
       )}
     >
       <div className="flex items-center justify-between text-xs">
@@ -73,9 +81,9 @@ function ModelRow({
             <AlertCircle className="w-3.5 h-3.5 text-rose-300" />
           )}
           <span className="font-mono text-white/85">{model.provider}</span>
-          {isPrimary && (
+          {isSelected && (
             <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-400/10 text-cyan-300 border border-cyan-400/30">
-              主模型
+              查看中
             </span>
           )}
         </div>

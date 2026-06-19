@@ -8,6 +8,7 @@ import {
   KeyPlayersPanel,
 } from "@/components/match-detail/KeyFactorsPanel";
 import { MarketValueCompare } from "@/components/match-detail/MarketValueCompare";
+import { ModelComparison } from "@/components/match-detail/ModelComparison";
 
 // Cloudflare Pages / Workers 要求显式声明 Edge Runtime
 export const runtime = "edge";
@@ -121,8 +122,8 @@ export default async function MatchDetailPage({
             />
           </div>
 
-          {/* 右：比赛信息 */}
-          <div className="space-y-5">
+          {/* 右：比赛信息 + 模型对比（黏性滚动） */}
+          <div className="space-y-5 lg:sticky lg:top-24 lg:self-start">
             {/* 比赛元信息 */}
             <div className="glass rounded-2xl p-5 sm:p-6">
               <div className="flex items-center gap-2 mb-4 text-white">
@@ -150,6 +151,11 @@ export default async function MatchDetailPage({
                 />
               </dl>
             </div>
+
+            {/* 多模型对比 */}
+            {prediction && prediction.models.length > 0 && (
+              <ModelComparison models={prediction.models} />
+            )}
           </div>
         </div>
       </div>

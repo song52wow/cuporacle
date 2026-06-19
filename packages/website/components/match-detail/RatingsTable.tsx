@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { PlayerRating } from "@/lib/types";
 import { Star } from "lucide-react";
 
@@ -64,12 +63,10 @@ function RatingGroup({
           </thead>
           <tbody>
             {ratings.map((r, i) => (
-              <motion.tr
+              <tr
                 key={`${r.player_name}-${i}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3, delay: i * 0.04 }}
-                className="border-t border-white/5 hover:bg-white/[0.02]"
+                className="border-t border-white/5 hover:bg-white/[0.02] animate-fade-up"
+                style={{ animationDelay: `${i * 40}ms` }}
               >
                 <td className="px-3 py-2 font-mono text-white/45">
                   {r.shirt_number ?? "-"}
@@ -97,7 +94,7 @@ function RatingGroup({
                 <td className="px-3 py-2 text-right font-mono text-white/70">
                   {r.pace.toFixed(1)}
                 </td>
-              </motion.tr>
+              </tr>
             ))}
           </tbody>
         </table>

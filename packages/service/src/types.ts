@@ -131,6 +131,19 @@ export interface PredictionBundle {
   models: ModelResult[];
 }
 
+export interface ModelContextResponse {
+  match_id: string;
+  provider: string;
+  model: string;
+  prompt_hash: string | null;
+  /** 重建的 user_prompt 哈希是否与存储的 prompt_hash 一致 */
+  prompt_hash_match: boolean | null;
+  system_prompt: string;
+  user_prompt: string;
+  /** 当前为从比赛数据重建，非预测时快照 */
+  rebuilt: boolean;
+}
+
 export interface MatchDetailResponse {
   match: Match;
   home_form: Record<string, unknown> | null;

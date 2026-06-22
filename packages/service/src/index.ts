@@ -4,6 +4,7 @@
 
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { getModelContext } from "./context";
 import { getMatchDetail, getMatches, getPredictionBundle, getTournament, getTeams, getTeamDetail, getTeamPlayers } from "./db";
 import { pushRoutes } from "./push-handlers";
 import type { MatchStatus } from "./types";
@@ -63,6 +64,7 @@ app.get("/api", (c) =>
       "GET /api/matches?status=SCHEDULED|TIMED|IN_PLAY|FINISHED",
       "GET /api/matches/:id",
       "GET /api/predictions/:id",
+      "GET /api/predictions/:id/models/:provider/context",
       "GET /api/teams",
       "GET /api/teams/:slug",
       "GET /api/teams/:slug/players",
@@ -93,6 +95,15 @@ app.get("/api/predictions/:id", async (c) => {
   const bundle = await getPredictionBundle(c.env.DB, id);
   if (!bundle) return c.json({ error: "predictions not found" }, 404);
   return c.json(bundle);
+});
+
+// 指定模型的 LLM 输入上下文（从比赛数据重建）
+app.get("/api/predictions/:id/models/:provider/context", async (c) => {
+  const matchId = c.req.param("id");
+  const provider = c.req.param("provider");
+  const ctx = await getModelContext(c.env.DB, matchId, provider);
+  if (!ctx) return c.json({ error: "model context not found" }, 404);
+  return c.json(ctx);
 });
 
 // ─── Teams & Players ────────────────────────────────────────────

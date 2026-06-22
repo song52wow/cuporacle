@@ -131,6 +131,17 @@ export interface PredictionBundle {
   models: ModelResult[];
 }
 
+export interface ModelContextResponse {
+  match_id: string;
+  provider: string;
+  model: string;
+  prompt_hash: string | null;
+  prompt_hash_match: boolean | null;
+  system_prompt: string;
+  user_prompt: string;
+  rebuilt: boolean;
+}
+
 export interface MatchDetailResponse {
   match: Match;
   home_form: Record<string, unknown> | null;

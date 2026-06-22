@@ -13,6 +13,7 @@ import type {
   MatchListResponse,
   Player,
   PredictionBundle,
+  ModelContextResponse,
   TeamDetailResponse,
   TeamListResponse,
   Tournament,
@@ -81,6 +82,22 @@ export async function getMatchDetail(id: string): Promise<MatchDetailResponse | 
 export async function getPrediction(id: string): Promise<PredictionBundle | null> {
   const data = await safeFetch<PredictionBundle>(`/api/predictions/${id}`);
   return data ?? mockPredictionBundle(id);
+}
+
+/** 客户端获取指定模型的 LLM 输入上下文（走 Next.js rewrite 代理） */
+export async function fetchModelContext(
+  matchId: string,
+  provider: string
+): Promise<ModelContextResponse | null> {
+  if (USE_MOCK) return null;
+  const path = `/api/predictions/${encodeURIComponent(matchId)}/models/${encodeURIComponent(provider)}/context`;
+  try {
+    const res = await fetch(path, { signal: AbortSignal.timeout(15000) });
+    if (!res.ok) return null;
+    return (await res.json()) as ModelContextResponse;
+  } catch {
+    return null;
+  }
 }
 
 // ─── Teams & Players ────────────────────────────────────────────

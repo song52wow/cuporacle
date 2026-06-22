@@ -60,12 +60,13 @@ export function useActivePrediction(): PredictionResponse | null {
 
 // ─── 侧边栏模型对比：从 Context 读取/写入 selectedProvider ──
 export function SidebarModelComparison() {
-  const { selectedProvider, setSelectedProvider, prediction } = useMatchState();
+  const { selectedProvider, setSelectedProvider, prediction, match } = useMatchState();
 
   if (!prediction || prediction.models.length === 0) return null;
 
   return (
     <ModelComparison
+      matchId={match.id}
       models={prediction.models}
       selectedProvider={selectedProvider}
       onSelect={setSelectedProvider}

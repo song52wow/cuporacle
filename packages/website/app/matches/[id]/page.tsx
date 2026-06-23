@@ -62,27 +62,10 @@ export default async function MatchDetailPage({
             </div>
           )}
 
-          {/* 主体网格 */}
+          {/* 主体网格：移动端侧边栏置顶（比赛信息、多模型对比在最可能比分上方），桌面端仍在右侧 */}
           <div className="mt-6 grid gap-5 lg:grid-cols-3">
-            {/* 左：核心 2 列（跟随模型切换更新） */}
-            <div className="lg:col-span-2 space-y-5 min-w-0">
-              <MatchLeftContent
-                homeName={m.home_team_name}
-                awayName={m.away_team_name}
-              />
-
-              {/* 球员评分 */}
-              <RatingsTable
-                home={detail.home_ratings}
-                away={detail.away_ratings}
-                homeName={m.home_team_name}
-                awayName={m.away_team_name}
-              />
-            </div>
-
-            {/* 右：比赛信息 + 模型对比（黏性滚动） */}
-            <div className="space-y-5 lg:sticky lg:top-24 lg:self-start">
-              {/* 比赛元信息 */}
+            {/* 比赛信息 + 模型对比（DOM 靠前 → 移动端优先展示） */}
+            <div className="space-y-5 lg:col-start-3 lg:row-start-1 lg:sticky lg:top-24 lg:self-start">
               <div className="glass rounded-2xl p-5 sm:p-6">
                 <div className="flex items-center gap-2 mb-4 text-white">
                   <span className="text-cyan-300">
@@ -110,8 +93,22 @@ export default async function MatchDetailPage({
                 </dl>
               </div>
 
-              {/* 多模型对比（从 Context 读取共享状态） */}
               <SidebarModelComparison />
+            </div>
+
+            {/* 左：核心 2 列（跟随模型切换更新） */}
+            <div className="space-y-5 min-w-0 lg:col-span-2 lg:col-start-1 lg:row-start-1">
+              <MatchLeftContent
+                homeName={m.home_team_name}
+                awayName={m.away_team_name}
+              />
+
+              <RatingsTable
+                home={detail.home_ratings}
+                away={detail.away_ratings}
+                homeName={m.home_team_name}
+                awayName={m.away_team_name}
+              />
             </div>
           </div>
         </MatchDetailProvider>

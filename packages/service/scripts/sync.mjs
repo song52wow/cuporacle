@@ -32,7 +32,7 @@ const DEFAULTS = {
 
 const ALL_TABLES = [
   "matches", "team_form", "h2h", "team_squad",
-  "squad_ratings", "predictions", "prediction_models",
+  "squad_ratings", "predictions", "prediction_models", "group_standings",
 ];
 
 // 这些列永远不上 D1(API key / 内部调试)

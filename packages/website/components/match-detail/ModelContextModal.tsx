@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { X, FileText, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { fetchModelContext } from "@/lib/api";
 import type { ModelContextResponse } from "@/lib/types";
@@ -20,6 +21,19 @@ export function ModelContextModal({ matchId, provider, modelName, onClose }: Pro
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [ctx, setCtx] = useState<ModelContextResponse | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,9 +62,11 @@ export function ModelContextModal({ matchId, provider, modelName, onClose }: Pro
 
   const activeText = tab === "user" ? ctx?.user_prompt : ctx?.system_prompt;
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4"
       onClick={onClose}
     >
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
@@ -138,7 +154,8 @@ export function ModelContextModal({ matchId, provider, modelName, onClose }: Pro
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

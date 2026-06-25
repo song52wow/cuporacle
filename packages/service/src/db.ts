@@ -8,6 +8,7 @@ import type {
   Match, MatchDetailResponse, MatchListResponse, ModelResult,
   Player, PlayerRating, PredictionBundle, PredictionResponse, ScoreDistributionItem,
   Team, TeamDetailResponse, TeamListResponse, Tournament, KeyFactor, KeyPlayer,
+  GroupStandingEntry, StandingsResponse,
 } from "./types";
 
 // ─── D1 row types (raw 形状,跟表 schema 一一对应) ───────────────────────
@@ -56,6 +57,23 @@ interface PredictionModelRow {
   risk_factors_json: string | null;
   prompt_hash: string | null;
   parse_failed: number;
+}
+interface GroupStandingRow {
+  group: string;
+  team_id: string;
+  team_name: string;
+  position: number;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goals_for: number;
+  goals_against: number;
+  goal_diff: number;
+  points: number;
+  qualification_status: string | null;
+  qualification_note: string | null;
+  updated_at: string;
 }
 
 // ─── helpers ───────────────────────────────────────────────────────────
@@ -167,6 +185,44 @@ export async function getTournament(db: D1Database): Promise<Tournament> {
     match_count: counts?.total ?? 0,
     upcoming_count: counts?.upcoming ?? 0,
     finished_count: counts?.finished ?? 0,
+  };
+}
+
+export async function getStandings(db: D1Database): Promise<StandingsResponse> {
+  const { results: rows } = await db.prepare(
+    `SELECT "group", team_id, team_name, position,
+            played, won, drawn, lost,
+            goals_for, goals_against, goal_diff, points,
+            qualification_status, qualification_note
+     FROM group_standings
+     ORDER BY "group", position`
+  ).all<GroupStandingRow>();
+
+  const updated = await db.prepare(
+    "SELECT MAX(updated_at) AS updated_at FROM group_standings"
+  ).first<{ updated_at: string | null }>();
+
+  const standings: GroupStandingEntry[] = rows.map((r) => ({
+    group: r.group,
+    team_id: r.team_id,
+    team_name: r.team_name,
+    position: r.position,
+    played: r.played,
+    won: r.won,
+    drawn: r.drawn,
+    lost: r.lost,
+    goals_for: r.goals_for,
+    goals_against: r.goals_against,
+    goal_diff: r.goal_diff,
+    points: r.points,
+    qualification_status: (r.qualification_status as GroupStandingEntry["qualification_status"]) ?? null,
+    qualification_note: r.qualification_note ?? null,
+  }));
+
+  return {
+    updated_at: updated?.updated_at ?? null,
+    standings,
+    total: standings.length,
   };
 }
 

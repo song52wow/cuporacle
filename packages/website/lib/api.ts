@@ -14,6 +14,7 @@ import type {
   Player,
   PredictionBundle,
   ModelContextResponse,
+  StandingsResponse,
   TeamDetailResponse,
   TeamListResponse,
   Tournament,
@@ -60,6 +61,11 @@ async function safeFetch<T>(path: string): Promise<T | null> {
 export async function getTournament(): Promise<Tournament> {
   const data = await safeFetch<Tournament>("/api/tournament");
   return data ?? mockTournament();
+}
+
+export async function getStandings(): Promise<StandingsResponse> {
+  const data = await safeFetch<StandingsResponse>("/api/standings");
+  return data ?? { updated_at: null, standings: [], total: 0 };
 }
 
 export async function getMatches(

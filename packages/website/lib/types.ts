@@ -42,6 +42,29 @@ export interface Tournament {
   finished_count: number;
 }
 
+export interface GroupStandingEntry {
+  group: string;
+  team_id: string;
+  team_name: string;
+  position: number;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goals_for: number;
+  goals_against: number;
+  goal_diff: number;
+  points: number;
+  qualification_status?: "qualified" | "pending" | "eliminated" | null;
+  qualification_note?: string | null;
+}
+
+export interface StandingsResponse {
+  updated_at: string | null;
+  standings: GroupStandingEntry[];
+  total: number;
+}
+
 export interface ScoreDistributionItem {
   home: number;
   away: number;

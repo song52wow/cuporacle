@@ -5,7 +5,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { getModelContext } from "./context";
-import { getMatchDetail, getMatches, getPredictionBundle, getTournament, getTeams, getTeamDetail, getTeamPlayers } from "./db";
+import { getMatchDetail, getMatches, getPredictionBundle, getStandings, getTournament, getTeams, getTeamDetail, getTeamPlayers } from "./db";
 import { pushRoutes } from "./push-handlers";
 import type { MatchStatus } from "./types";
 
@@ -61,6 +61,7 @@ app.get("/api", (c) =>
   c.json({
     endpoints: [
       "GET /api/tournament",
+      "GET /api/standings",
       "GET /api/matches?status=SCHEDULED|TIMED|IN_PLAY|FINISHED",
       "GET /api/matches/:id",
       "GET /api/predictions/:id",
@@ -74,6 +75,9 @@ app.get("/api", (c) =>
 
 // 锦标赛概览
 app.get("/api/tournament", async (c) => c.json(await getTournament(c.env.DB)));
+
+// 小组赛积分榜（持久化数据，由 admin 同步后推送至 D1）
+app.get("/api/standings", async (c) => c.json(await getStandings(c.env.DB)));
 
 // 比赛列表
 app.get("/api/matches", async (c) => {
@@ -130,7 +134,7 @@ app.get("/api/teams/:slug/players", async (c) => {
 // body 格式: { tables: { matches: [...], predictions: [...], ... } }
 const SYNC_TABLES = [
   "matches", "team_form", "h2h", "team_squad",
-  "squad_ratings", "predictions", "prediction_models",
+  "squad_ratings", "predictions", "prediction_models", "group_standings",
 ] as const;
 // D1 batch 限制:statements 50 / vars 100000;最紧的是 vars,按最宽列算
 // prediction_models 18 列 × 50 = 900 vars,远低于 100000,稳妥

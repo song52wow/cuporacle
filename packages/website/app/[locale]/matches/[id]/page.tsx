@@ -1,35 +1,50 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin } from "lucide-react";
+import { getTranslations, getLocale } from "next-intl/server";
 import { getMatchDetail, getPrediction, getStandings } from "@/lib/api";
+import { getTeamName } from "@/lib/teams";
 import { GroupQualificationPanel } from "@/components/GroupQualificationPanel";
-import { formatGroupLabel } from "@/lib/utils";
+import { formatGroupLabel, formatDateTime } from "@/lib/utils";
 import { MatchDetailProvider, HeroFromContext, SidebarModelComparison } from "@/components/match-detail/MatchDetailClient";
 import { MatchLeftContent } from "@/components/match-detail/MatchLeftContent";
 import { MarketValueCompare } from "@/components/match-detail/MarketValueCompare";
-
-// Cloudflare Pages / Workers 要求显式声明 Edge Runtime
-export const runtime = "edge";
 import { RatingsTable } from "@/components/match-detail/RatingsTable";
+import type { Locale } from "@/i18n/routing";
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const detail = await getMatchDetail(params.id);
-  if (!detail) return { title: "未找到比赛 · CupOracle" };
+export const runtime = "edge";
+
+export async function generateMetadata({
+  params: { id, locale },
+}: {
+  params: { id: string; locale: string };
+}) {
+  const t = await getTranslations({ locale, namespace: "matchDetail" });
+  const detail = await getMatchDetail(id);
+  if (!detail) return { title: t("notFound") };
+  const loc = locale as Locale;
+  const home = getTeamName(detail.match.home_team_name, loc);
+  const away = getTeamName(detail.match.away_team_name, loc);
   return {
-    title: `${detail.match.home_team_name} vs ${detail.match.away_team_name} · CupOracle`,
-    description: `AI 多模型预测：${detail.match.home_team_name} vs ${detail.match.away_team_name}`,
+    title: `${home} vs ${away} · CupOracle`,
+    description: t("metaDescription", { home, away }),
   };
 }
 
 export default async function MatchDetailPage({
-  params,
+  params: { id },
 }: {
-  params: { id: string };
+  params: { id: string; locale: string };
 }) {
-  const detail = await getMatchDetail(params.id);
+  const locale = (await getLocale()) as Locale;
+  const t = await getTranslations("matchDetail");
+  const tStages = await getTranslations("stages");
+  const tCommon = await getTranslations("common");
+
+  const detail = await getMatchDetail(id);
   if (!detail) return notFound();
   const [prediction, standingsData] = await Promise.all([
-    getPrediction(params.id),
+    getPrediction(id),
     getStandings(),
   ]);
   const m = detail.match;
@@ -38,42 +53,41 @@ export default async function MatchDetailPage({
       ? standingsData.standings.filter((r) => r.group === m.group)
       : [];
 
+  const homeDisplay = getTeamName(m.home_team_name, locale);
+  const awayDisplay = getTeamName(m.away_team_name, locale);
+  const stageLabel = m.stage ? tStages(m.stage as "GROUP_STAGE") : "-";
+
   return (
     <div className="relative">
       <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
       <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-[800px] h-[420px] rounded-full bg-cyan-violet opacity-20 blur-[100px]" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-8 pb-20">
-        {/* 返回 */}
         <Link
           href="/matches"
           className="inline-flex items-center gap-1.5 text-xs font-mono text-white/55 hover:text-white"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          返回赛事列表
+          {t("back")}
         </Link>
 
-        {/* Hero 预测 + 多模型对比（客户端交互，共享选中状态） */}
         <MatchDetailProvider match={m} prediction={prediction}>
           <div className="mt-6">
             <HeroFromContext />
           </div>
 
-          {/* 阵容身价对比 - 第二模块，占满宽度 */}
           {(detail.home_squad.length > 0 || detail.away_squad.length > 0) && (
             <div className="mt-6">
               <MarketValueCompare
-                homeName={m.home_team_name}
-                awayName={m.away_team_name}
+                homeName={homeDisplay}
+                awayName={awayDisplay}
                 homeSquad={detail.home_squad}
                 awaySquad={detail.away_squad}
               />
             </div>
           )}
 
-          {/* 主体网格：移动端侧边栏置顶（比赛信息、多模型对比在最可能比分上方），桌面端仍在右侧 */}
           <div className="mt-6 grid gap-5 lg:grid-cols-3">
-            {/* 比赛信息 + 模型对比（DOM 靠前 → 移动端优先展示） */}
             <div className="space-y-5 lg:col-start-3 lg:row-start-1 lg:sticky lg:top-24 lg:self-start">
               <div className="glass rounded-2xl p-5 sm:p-6">
                 <div className="flex items-center gap-2 mb-4 text-white">
@@ -81,16 +95,16 @@ export default async function MatchDetailPage({
                     <MapPin className="w-4 h-4" />
                   </span>
                   <h3 className="text-base sm:text-lg font-semibold tracking-tight">
-                    比赛信息
+                    {t("matchInfo")}
                   </h3>
                 </div>
                 <dl className="space-y-3 text-sm">
-                  <Row k="开赛时间" v={new Date(m.utc_date).toLocaleString("zh-CN")} />
-                  <Row k="场地" v={m.venue ?? "待定"} />
-                  <Row k="阶段" v={m.stage ?? "-"} />
-                  <Row k="分组" v={m.group ?? "—"} />
+                  <Row k={t("kickoff")} v={formatDateTime(m.utc_date, locale)} />
+                  <Row k={t("venue")} v={m.venue ?? tCommon("tbd")} />
+                  <Row k={t("stage")} v={stageLabel} />
+                  <Row k={t("group")} v={m.group ?? "—"} />
                   <Row
-                    k="模型状态"
+                    k={t("modelStatus")}
                     v={
                       <span className="font-mono">
                         <span className="text-emerald-300">{m.prediction_models_ok}</span>
@@ -105,16 +119,14 @@ export default async function MatchDetailPage({
               <SidebarModelComparison />
             </div>
 
-            {/* 左：核心 2 列（跟随模型切换更新） */}
             <div className="space-y-5 min-w-0 lg:col-span-2 lg:col-start-1 lg:row-start-1">
-              <MatchLeftContent
-                homeName={m.home_team_name}
-                awayName={m.away_team_name}
-              />
+              <MatchLeftContent homeName={homeDisplay} awayName={awayDisplay} />
 
               {groupRows.length > 0 && (
                 <GroupQualificationPanel
-                  groupName={`${formatGroupLabel(m.group)} 组出线形势`}
+                  groupName={t("groupQualification", {
+                    group: formatGroupLabel(m.group),
+                  })}
                   rows={groupRows}
                   teamIds={[m.home_team_id, m.away_team_id]}
                 />
@@ -123,8 +135,8 @@ export default async function MatchDetailPage({
               <RatingsTable
                 home={detail.home_ratings}
                 away={detail.away_ratings}
-                homeName={m.home_team_name}
-                awayName={m.away_team_name}
+                homeName={homeDisplay}
+                awayName={awayDisplay}
               />
             </div>
           </div>

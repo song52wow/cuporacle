@@ -1,43 +1,24 @@
+import { getTranslations } from "next-intl/server";
 import { getTournament, getMatches } from "@/lib/api";
 import { Sparkles, Calendar, CheckCircle2, Brain } from "lucide-react";
 
 export async function StatsBar() {
-  const t = await getTournament();
+  const t = await getTranslations("stats");
+  const tour = await getTournament();
   const matches = await getMatches();
   const upcoming = matches.matches.filter((m) =>
     ["TIMED", "SCHEDULED"].includes(m.status)
   ).length;
   const finished = matches.matches.filter((m) => m.status === "FINISHED").length;
-  // 找到有预测的比赛数
   const withPrediction = matches.matches.filter(
     (m) => m.prediction_models_ok > 0
   ).length;
 
   const items = [
-    {
-      icon: Calendar,
-      label: "全部比赛",
-      value: t.match_count,
-      suffix: "场",
-    },
-    {
-      icon: Sparkles,
-      label: "未开赛",
-      value: upcoming,
-      suffix: "场",
-    },
-    {
-      icon: CheckCircle2,
-      label: "已结束",
-      value: finished,
-      suffix: "场",
-    },
-    {
-      icon: Brain,
-      label: "AI 已预测",
-      value: withPrediction,
-      suffix: "场",
-    },
+    { icon: Calendar, label: t("allMatches"), value: tour.match_count, suffix: t("suffix") },
+    { icon: Sparkles, label: t("upcoming"), value: upcoming, suffix: t("suffix") },
+    { icon: CheckCircle2, label: t("finished"), value: finished, suffix: t("suffix") },
+    { icon: Brain, label: t("predicted"), value: withPrediction, suffix: t("suffix") },
   ];
 
   return (
@@ -59,13 +40,11 @@ export async function StatsBar() {
                     <span className="text-2xl font-bold tracking-tight text-white tabular-nums">
                       {it.value}
                     </span>
-                    <span className="text-xs font-mono text-white/40">
-                      {it.suffix}
-                    </span>
+                    {it.suffix && (
+                      <span className="text-xs font-mono text-white/40">{it.suffix}</span>
+                    )}
                   </div>
-                  <div className="mt-1 text-[11px] font-mono text-white/55">
-                    {it.label}
-                  </div>
+                  <div className="mt-1 text-[11px] font-mono text-white/55">{it.label}</div>
                 </div>
               </div>
             );

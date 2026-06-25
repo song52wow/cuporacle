@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Cpu, CheckCircle2, AlertCircle, FileText } from "lucide-react";
 import type { ModelResult } from "@/lib/types";
 import { cn, formatPct } from "@/lib/utils";
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function ModelComparison({ matchId, models, selectedProvider, onSelect }: Props) {
+  const t = useTranslations("matchDetail");
   const [contextProvider, setContextProvider] = useState<ModelResult | null>(null);
 
   return (
@@ -26,11 +28,14 @@ export function ModelComparison({ matchId, models, selectedProvider, onSelect }:
               <Cpu className="w-4 h-4" />
             </span>
             <h3 className="text-base sm:text-lg font-semibold tracking-tight">
-              多模型对比
+              {t("modelCompare")}
             </h3>
           </div>
           <span className="text-[11px] font-mono text-white/45">
-            {models.filter((m) => m.status === "ok").length}/{models.length} 模型就绪
+            {t("modelsReady", {
+              ok: models.filter((m) => m.status === "ok").length,
+              total: models.length,
+            })}
           </span>
         </div>
 
@@ -75,6 +80,7 @@ function ModelRow({
   onClick?: () => void;
   onViewContext: () => void;
 }) {
+  const t = useTranslations("matchDetail");
   const ok = model.status === "ok";
   const max = Math.max(model.win_prob ?? 0, model.draw_prob ?? 0, model.loss_prob ?? 0);
   return (
@@ -101,14 +107,14 @@ function ModelRow({
           <span className="font-mono text-white/85">{model.provider}</span>
           {isSelected && (
             <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-400/10 text-cyan-300 border border-cyan-400/30">
-              查看中
+              {t("viewing")}
             </span>
           )}
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             type="button"
-            title="查看上下文"
+            title={t("viewContext")}
             onClick={(e) => {
               e.stopPropagation();
               onViewContext();
@@ -116,7 +122,7 @@ function ModelRow({
             className="flex items-center gap-1 text-[10px] font-mono px-2 py-1 rounded-md text-white/45 hover:text-cyan-300 hover:bg-cyan-400/10 border border-transparent hover:border-cyan-400/20 transition"
           >
             <FileText className="w-3 h-3" />
-            上下文
+            {t("context")}
           </button>
           <span className="text-[10px] font-mono text-white/40 truncate max-w-[80px] hidden sm:inline">
             {model.model}
@@ -126,18 +132,9 @@ function ModelRow({
       {ok ? (
         <div className="mt-2 flex items-center gap-2">
           <div className="flex-1 h-1.5 rounded-full bg-ink-700/50 overflow-hidden flex">
-            <div
-              className="h-full bg-gradient-to-r from-cyan-400 to-cyan-500"
-              style={{ width: `${((model.win_prob ?? 0) / max) * 100}%` }}
-            />
-            <div
-              className="h-full bg-gradient-to-r from-violet-400 to-violet-500"
-              style={{ width: `${((model.draw_prob ?? 0) / max) * 100}%` }}
-            />
-            <div
-              className="h-full bg-gradient-to-r from-rose-400 to-rose-500"
-              style={{ width: `${((model.loss_prob ?? 0) / max) * 100}%` }}
-            />
+            <div className="h-full bg-gradient-to-r from-cyan-400 to-cyan-500" style={{ width: `${((model.win_prob ?? 0) / max) * 100}%` }} />
+            <div className="h-full bg-gradient-to-r from-violet-400 to-violet-500" style={{ width: `${((model.draw_prob ?? 0) / max) * 100}%` }} />
+            <div className="h-full bg-gradient-to-r from-rose-400 to-rose-500" style={{ width: `${((model.loss_prob ?? 0) / max) * 100}%` }} />
           </div>
           <div className="text-[10px] font-mono text-white/55 tabular-nums whitespace-nowrap">
             {formatPct(model.win_prob ?? 0, 0)} · {formatPct(model.draw_prob ?? 0, 0)} · {formatPct(model.loss_prob ?? 0, 0)}
@@ -145,7 +142,7 @@ function ModelRow({
         </div>
       ) : (
         <div className="mt-2 text-[11px] font-mono text-rose-300/85">
-          {model.error ?? "模型未返回结果"}
+          {model.error ?? t("noModelResult")}
         </div>
       )}
     </motion.div>
@@ -153,6 +150,7 @@ function ModelRow({
 }
 
 function ConsensusBar({ models }: { models: ModelResult[] }) {
+  const t = useTranslations("matchDetail");
   const ok = models.filter((m) => m.status === "ok" && m.win_prob != null);
   if (ok.length < 2) return null;
   const avg = (key: keyof ModelResult) =>
@@ -173,7 +171,7 @@ function ConsensusBar({ models }: { models: ModelResult[] }) {
   return (
     <div className="mt-5 pt-4 border-t border-white/5">
       <div className="flex items-center justify-between text-[11px] font-mono text-white/55">
-        <span>多模型共识度</span>
+        <span>{t("consensus")}</span>
         <span className="text-white">{(consensus * 100).toFixed(0)}%</span>
       </div>
       <div className="mt-2 h-2 rounded-full bg-ink-700/50 overflow-hidden">

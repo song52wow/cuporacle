@@ -1,0 +1,222 @@
+{
+  "metadata": {
+    "title": "CupOracle · 世界杯 AI 预测平台",
+    "description": "基于多模型 LLM 的 2026 世界杯胜负、概率与比分预测，覆盖小组赛至决赛的全程赛事追踪。"
+  },
+  "nav": {
+    "home": "首页",
+    "matches": "赛事",
+    "standings": "出线形势",
+    "viewPredictions": "查看预测",
+    "live": "LIVE · 2026"
+  },
+  "locale": {
+    "zh": "中文",
+    "en": "English",
+    "switch": "切换语言"
+  },
+  "footer": {
+    "about": "CupOracle 是一款基于多模型大语言模型的世界杯赛事预测平台，通过汇总多家主流 LLM 的判断，为球迷提供概率化的胜负与比分参考。",
+    "platform": "平台",
+    "home": "首页",
+    "allMatches": "全部赛事",
+    "standings": "出线形势",
+    "upcoming": "未开赛",
+    "finished": "已结束",
+    "legal": "法律",
+    "privacy": "隐私政策",
+    "disclaimer": "⚠️ 预测仅供研究与娱乐参考，不构成任何投注建议。"
+  },
+  "hero": {
+    "badge": "2026 美加墨世界杯 · 决赛 7月20日 · 剩 {days} 天",
+    "title1": "让多模型 AI",
+    "title2": "读懂世界杯",
+    "subtitle": "汇总多家主流大模型的判断，给出每场比赛的胜平负概率、最可能比分与关键因素。从小组赛到决赛，每一次判断都有迹可循。",
+    "ctaUpcoming": "关注即将开赛",
+    "ctaAll": "查看全部赛事",
+    "demoGroup": "小组赛 {group}",
+    "mostLikelyScore": "最可能比分",
+    "confidence": "置信度 {pct}%",
+    "allModelsReady": "已就绪"
+  },
+  "stats": {
+    "allMatches": "全部比赛",
+    "upcoming": "未开赛",
+    "finished": "已结束",
+    "predicted": "AI 已预测",
+    "suffix": "场"
+  },
+  "upcoming": {
+    "title": "即将开赛 · 明日 {count} 场",
+    "subtitle": "AI 多模型已对明日每场比赛给出概率化预测。",
+    "viewUpcoming": "查看即将开赛",
+    "empty": "明日暂无赛事。"
+  },
+  "features": {
+    "title": "不止是预测，更是",
+    "titleHighlight": "决策辅助",
+    "subtitle": "把 LLM 的概率判断和结构化赛事数据结合，把\"玄学\"变成可读、可对比、可验证的洞察。",
+    "multiModel": {
+      "title": "多模型并行预测",
+      "desc": "MiMo / DeepSeek / GLM / MiniMax 同时生成判断，输出概率化结果，再以共识机制聚合。"
+    },
+    "dataDriven": {
+      "title": "数据驱动解释",
+      "desc": "每一条结论附带近期形态、H2H 历史、伤停与场地因素，概率来源可追溯。"
+    },
+    "fullTournament": {
+      "title": "全程赛事追踪",
+      "desc": "状态、xG、置信度实时同步，从小组赛到决赛一站式查看。"
+    }
+  },
+  "cta": {
+    "title1": "下一场比赛的胜负",
+    "title2": "AI 怎么看？",
+    "subtitle": "浏览全部赛事的完整预测、关键因素与多模型对比，找到属于你的判断。",
+    "enter": "进入赛事中心",
+    "upcoming": "关注未开赛"
+  },
+  "matches": {
+    "title": "全部",
+    "titleHighlight": "赛事",
+    "subtitle": "覆盖从小组赛到决赛的全部赛事。支持状态、分组与球队搜索。",
+    "metaTitle": "全部赛事 · CupOracle",
+    "metaDescription": "浏览 2026 世界杯全部赛事的 AI 预测与状态。",
+    "filterAll": "全部",
+    "filterTimed": "未开赛",
+    "filterInPlay": "进行中",
+    "filterFinished": "已结束",
+    "searchPlaceholder": "搜索球队 / 场地",
+    "allGroups": "全部组",
+    "count": "共 {count} 场",
+    "searching": "包含「{q}」",
+    "sortByTime": "按开赛时间升序",
+    "noResults": "未找到匹配的比赛",
+    "groupSuffix": "组",
+    "home": "主队",
+    "away": "客队",
+    "finished": "已结束",
+    "aiConsensus": "AI 多模型共识",
+    "predicting": "预测生成中…",
+    "models": "{ok}/{total} 模型"
+  },
+  "matchDetail": {
+    "notFound": "未找到比赛 · CupOracle",
+    "metaDescription": "AI 多模型预测：{home} vs {away}",
+    "back": "返回赛事列表",
+    "matchInfo": "比赛信息",
+    "kickoff": "开赛时间",
+    "venue": "场地",
+    "stage": "阶段",
+    "group": "分组",
+    "modelStatus": "模型状态",
+    "tbd": "待定",
+    "groupQualification": "{group} 组出线形势",
+    "aiReady": "AI 预测已就绪",
+    "aiProb": "AI 预测概率",
+    "mostLikelyScore": "最可能比分",
+    "confidence": "置信度 {pct}%",
+    "noPrediction": "暂无预测 · 后台尚未生成或比赛已结束",
+    "xgHome": "xG (主)",
+    "xgAway": "xG (客)",
+    "goalDiff": "净胜预期",
+    "topScores": "最可能比分（Top {n}）",
+    "keyFactors": "关键因素",
+    "keyPlayers": "关键球员",
+    "aiNarrative": "AI 解读",
+    "playerRatings": "球员评分",
+    "player": "球员",
+    "overall": "综合",
+    "passing": "传球",
+    "shooting": "射门",
+    "defense": "防守",
+    "pace": "速度",
+    "squadValue": "阵容身价对比",
+    "details": "详情",
+    "squadDetails": "阵容详情",
+    "goalkeepers": "门将",
+    "defenders": "后卫",
+    "midfielders": "中场",
+    "forwards": "前锋",
+    "yearsOld": "{age}岁",
+    "modelCompare": "多模型对比",
+    "modelsReady": "{ok}/{total} 模型就绪",
+    "viewing": "查看中",
+    "context": "上下文",
+    "viewContext": "查看上下文",
+    "noModelResult": "模型未返回结果",
+    "consensus": "多模型共识度",
+    "modelContext": "模型上下文",
+    "userInput": "用户输入",
+    "systemPrompt": "系统提示",
+    "loading": "加载中…",
+    "contextError": "无法加载上下文，请稍后重试",
+    "hashMatch": " · 与当前数据重建一致",
+    "hashMismatch": " · 数据可能已更新，与预测时不完全一致",
+    "close": "关闭",
+    "riskFactors": "风险与不确定",
+    "form": "状态 {score}"
+  },
+  "stages": {
+    "GROUP_STAGE": "小组赛",
+    "ROUND_OF_32": "1/16 决赛",
+    "ROUND_OF_16": "1/8 决赛",
+    "QUARTER_FINALS": "1/4 决赛",
+    "SEMI_FINALS": "半决赛",
+    "FINAL": "决赛"
+  },
+  "winProb": {
+    "home": "主胜",
+    "draw": "平",
+    "away": "客胜",
+    "homeWin": "主胜 {pct}%",
+    "drawPct": "平 {pct}%",
+    "awayWin": "客胜 {pct}%"
+  },
+  "impact": {
+    "positive_home": "利好主队",
+    "negative_home": "不利主队",
+    "positive_away": "利好客队",
+    "negative_away": "不利客队",
+    "neutral": "中性"
+  },
+  "qualification": {
+    "qualified": "已出线",
+    "pending": "待出线",
+    "eliminated": "已淘汰",
+    "unknown": "待定",
+    "locked": "已锁定出线名额",
+    "out": "已无缘出线",
+    "notStarted": "尚未开赛，出线形势待定",
+    "tbd": "出线形势待定",
+    "top2": "前 2 名出线",
+    "pageTitle": "小组赛",
+    "pageTitleHighlight": "出线形势",
+    "pageSubtitle": "各队出线状态与晋级条件。小组前 2 名晋级淘汰赛。",
+    "metaTitle": "小组赛出线形势 · CupOracle",
+    "metaDescription": "2026 世界杯小组赛各队出线条件与形势。",
+    "updatedAt": "更新于 {date}",
+    "empty": "暂无出线形势数据",
+    "groupSuffix": "组"
+  },
+  "common": {
+    "tbd": "待定",
+    "vs": "VS",
+    "kickoff": "kickoff",
+    "groupDemo": "小组赛 C",
+    "allModels": "全部模型"
+  },
+  "notifications": {
+    "enabled": "通知已开启",
+    "denied": "通知被屏蔽",
+    "enable": "开启新预测通知"
+  },
+  "privacy": {
+    "metaTitle": "隐私政策 · CupOracle",
+    "metaDescription": "CupOracle 隐私政策：说明我们如何收集、使用数据，以及 Google AdSense 等第三方服务与 Cookie 的使用方式。",
+    "legal": "法律信息",
+    "title": "隐私政策",
+    "updated": "最后更新：2026 年 6 月 25 日",
+    "backHome": "← 返回首页"
+  }
+}

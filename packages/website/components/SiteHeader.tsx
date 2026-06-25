@@ -1,20 +1,23 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Logo } from "./Logo";
 import { NotificationBell } from "@/components/NotificationBell";
+import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { cn } from "@/lib/utils";
 import { Trophy } from "lucide-react";
 
-const NAV = [
-  { href: "/", label: "首页" },
-  { href: "/matches", label: "赛事" },
-  { href: "/standings", label: "出线形势" },
-];
-
 export function SiteHeader() {
   const path = usePathname();
+  const t = useTranslations("nav");
+
+  const NAV = [
+    { href: "/" as const, label: t("home") },
+    { href: "/matches" as const, label: t("matches") },
+    { href: "/standings" as const, label: t("standings") },
+  ];
+
   return (
     <header className="sticky top-0 z-50">
       <div className="absolute inset-0 glass-strong border-b border-white/5" />
@@ -42,17 +45,18 @@ export function SiteHeader() {
           })}
         </nav>
         <div className="flex items-center gap-2">
+          <LocaleSwitcher className="hidden sm:inline-flex" />
           <NotificationBell />
           <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-full hairline text-emerald-300/90">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-glow" />
-            LIVE · 2026
+            {t("live")}
           </span>
           <Link
             href="/matches"
             className="inline-flex items-center gap-1.5 text-sm font-medium px-3.5 py-2 rounded-full bg-cyan-violet text-ink-950 hover:brightness-110 transition"
           >
             <Trophy className="w-4 h-4" />
-            查看预测
+            {t("viewPredictions")}
           </Link>
         </div>
       </div>

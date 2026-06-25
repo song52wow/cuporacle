@@ -2,9 +2,10 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface Props {
-  win: number; // 0-1
+  win: number;
   draw: number;
   loss: number;
   size?: "sm" | "md" | "lg";
@@ -20,6 +21,7 @@ export function WinProbBar({
   showLabels = true,
   className,
 }: Props) {
+  const t = useTranslations("winProb");
   const total = win + draw + loss || 1;
   const wPct = (win / total) * 100;
   const dPct = (draw / total) * 100;
@@ -57,15 +59,15 @@ export function WinProbBar({
         <div className="mt-2 flex items-center justify-between text-[11px] font-mono">
           <div className="flex items-center gap-1.5 text-cyan-300">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-            主胜 {wPct.toFixed(1)}%
+            {t("homeWin", { pct: wPct.toFixed(1) })}
           </div>
           <div className="flex items-center gap-1.5 text-violet-300">
             <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
-            平 {dPct.toFixed(1)}%
+            {t("drawPct", { pct: dPct.toFixed(1) })}
           </div>
           <div className="flex items-center gap-1.5 text-rose-300">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-            客胜 {lPct.toFixed(1)}%
+            {t("awayWin", { pct: lPct.toFixed(1) })}
           </div>
         </div>
       )}

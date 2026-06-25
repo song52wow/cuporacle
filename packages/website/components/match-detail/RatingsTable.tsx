@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { PlayerRating } from "@/lib/types";
 import { Star } from "lucide-react";
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function RatingsTable({ home, away, homeName, awayName }: Props) {
+  const t = useTranslations("matchDetail");
   if (home.length === 0 && away.length === 0) return null;
   return (
     <div className="glass rounded-2xl p-5 sm:p-6">
@@ -19,12 +21,12 @@ export function RatingsTable({ home, away, homeName, awayName }: Props) {
           <Star className="w-4 h-4" />
         </span>
         <h3 className="text-base sm:text-lg font-semibold tracking-tight">
-          球员评分
+          {t("playerRatings")}
         </h3>
       </div>
       <div className="grid sm:grid-cols-2 gap-4">
-        <RatingGroup label={homeName} ratings={home} accent="cyan" />
-        <RatingGroup label={awayName} ratings={away} accent="violet" />
+        <RatingGroup label={homeName} ratings={home} accent="cyan" t={t} />
+        <RatingGroup label={awayName} ratings={away} accent="violet" t={t} />
       </div>
     </div>
   );
@@ -34,10 +36,12 @@ function RatingGroup({
   label,
   ratings,
   accent,
+  t,
 }: {
   label: string;
   ratings: PlayerRating[];
   accent: "cyan" | "violet";
+  t: ReturnType<typeof useTranslations<"matchDetail">>;
 }) {
   return (
     <div>
@@ -53,12 +57,12 @@ function RatingGroup({
           <thead className="bg-white/[0.03] text-white/50">
             <tr>
               <th className="text-left font-mono px-3 py-2">#</th>
-              <th className="text-left font-mono px-3 py-2">球员</th>
-              <th className="text-right font-mono px-3 py-2">综合</th>
-              <th className="text-right font-mono px-3 py-2">传球</th>
-              <th className="text-right font-mono px-3 py-2">射门</th>
-              <th className="text-right font-mono px-3 py-2">防守</th>
-              <th className="text-right font-mono px-3 py-2">速度</th>
+              <th className="text-left font-mono px-3 py-2">{t("player")}</th>
+              <th className="text-right font-mono px-3 py-2">{t("overall")}</th>
+              <th className="text-right font-mono px-3 py-2">{t("passing")}</th>
+              <th className="text-right font-mono px-3 py-2">{t("shooting")}</th>
+              <th className="text-right font-mono px-3 py-2">{t("defense")}</th>
+              <th className="text-right font-mono px-3 py-2">{t("pace")}</th>
             </tr>
           </thead>
           <tbody>
@@ -72,12 +76,8 @@ function RatingGroup({
                   {r.shirt_number ?? "-"}
                 </td>
                 <td className="px-3 py-2">
-                  <div className="text-white truncate max-w-[120px]">
-                    {r.player_name}
-                  </div>
-                  <div className="text-[10px] font-mono text-white/40">
-                    {r.position}
-                  </div>
+                  <div className="text-white truncate max-w-[120px]">{r.player_name}</div>
+                  <div className="text-[10px] font-mono text-white/40">{r.position}</div>
                 </td>
                 <td className="px-3 py-2 text-right font-mono text-white font-semibold">
                   {r.overall.toFixed(1)}

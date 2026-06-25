@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useTranslations } from "next-intl";
 import { X, FileText, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { fetchModelContext } from "@/lib/api";
 import type { ModelContextResponse } from "@/lib/types";
@@ -17,6 +18,7 @@ interface Props {
 type Tab = "user" | "system";
 
 export function ModelContextModal({ matchId, provider, modelName, onClose }: Props) {
+  const t = useTranslations("matchDetail");
   const [tab, setTab] = useState<Tab>("user");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,14 +45,14 @@ export function ModelContextModal({ matchId, provider, modelName, onClose }: Pro
       const data = await fetchModelContext(matchId, provider);
       if (cancelled) return;
       if (!data) {
-        setError("无法加载上下文，请稍后重试");
+        setError(t("contextError"));
       } else {
         setCtx(data);
       }
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [matchId, provider]);
+  }, [matchId, provider, t]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -74,12 +76,11 @@ export function ModelContextModal({ matchId, provider, modelName, onClose }: Pro
         className="relative w-full sm:max-w-3xl max-h-[90vh] flex flex-col glass rounded-t-2xl sm:rounded-2xl border border-white/10 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-start justify-between gap-3 p-5 border-b border-white/10">
           <div>
             <div className="flex items-center gap-2 text-white">
               <FileText className="w-4 h-4 text-cyan-300" />
-              <h3 className="text-base font-semibold">模型上下文</h3>
+              <h3 className="text-base font-semibold">{t("modelContext")}</h3>
             </div>
             <p className="mt-1 text-xs font-mono text-white/50">
               {provider} · {modelName}
@@ -89,28 +90,26 @@ export function ModelContextModal({ matchId, provider, modelName, onClose }: Pro
             type="button"
             onClick={onClose}
             className="p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition"
-            aria-label="关闭"
+            aria-label={t("close")}
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-1 px-5 pt-3">
           <TabButton active={tab === "user"} onClick={() => setTab("user")}>
-            用户输入
+            {t("userInput")}
           </TabButton>
           <TabButton active={tab === "system"} onClick={() => setTab("system")}>
-            系统提示
+            {t("systemPrompt")}
           </TabButton>
         </div>
 
-        {/* Body */}
         <div className="flex-1 overflow-y-auto p-5 min-h-0">
           {loading && (
             <div className="flex items-center justify-center gap-2 py-16 text-white/50">
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span className="text-sm font-mono">加载中…</span>
+              <span className="text-sm font-mono">{t("loading")}</span>
             </div>
           )}
 
@@ -141,8 +140,8 @@ export function ModelContextModal({ matchId, provider, modelName, onClose }: Pro
                   )}
                   <span>
                     prompt_hash: {ctx.prompt_hash}
-                    {ctx.prompt_hash_match === true && " · 与当前数据重建一致"}
-                    {ctx.prompt_hash_match === false && " · 数据可能已更新，与预测时不完全一致"}
+                    {ctx.prompt_hash_match === true && t("hashMatch")}
+                    {ctx.prompt_hash_match === false && t("hashMismatch")}
                   </span>
                 </div>
               )}

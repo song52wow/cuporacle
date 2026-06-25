@@ -1,14 +1,22 @@
+import { getTranslations, getLocale } from "next-intl/server";
 import { getStandings } from "@/lib/api";
 import { GroupQualificationPanel } from "@/components/GroupQualificationPanel";
 import type { GroupStandingEntry } from "@/lib/types";
-import { formatGroupLabel } from "@/lib/utils";
+import { formatGroupLabel, formatDateTime } from "@/lib/utils";
 
 export const runtime = "edge";
 
-export const metadata = {
-  title: "小组赛出线形势 · CupOracle",
-  description: "2026 世界杯小组赛各队出线条件与形势。",
-};
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  const t = await getTranslations({ locale, namespace: "qualification" });
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 function groupStandings(standings: GroupStandingEntry[]) {
   const map = new Map<string, GroupStandingEntry[]>();
@@ -20,6 +28,8 @@ function groupStandings(standings: GroupStandingEntry[]) {
 }
 
 export default async function StandingsPage() {
+  const locale = await getLocale();
+  const t = await getTranslations("qualification");
   const data = await getStandings();
   const groups = groupStandings(data.standings);
 
@@ -31,14 +41,13 @@ export default async function StandingsPage() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-14 pb-20">
         <div className="mb-8">
           <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white text-balance">
-            小组赛 <span className="text-gradient-cyan-violet">出线形势</span>
+            {t("pageTitle")}{" "}
+            <span className="text-gradient-cyan-violet">{t("pageTitleHighlight")}</span>
           </h1>
-          <p className="mt-3 text-sm text-white/55 max-w-xl">
-            各队出线状态与晋级条件。小组前 2 名晋级淘汰赛。
-          </p>
+          <p className="mt-3 text-sm text-white/55 max-w-xl">{t("pageSubtitle")}</p>
           {data.updated_at && (
             <p className="mt-2 text-xs font-mono text-white/40">
-              更新于 {new Date(data.updated_at).toLocaleString("zh-CN")}
+              {t("updatedAt", { date: formatDateTime(data.updated_at, locale) })}
             </p>
           )}
         </div>
@@ -48,14 +57,14 @@ export default async function StandingsPage() {
             {groups.map(([group, rows]) => (
               <GroupQualificationPanel
                 key={group}
-                groupName={`${formatGroupLabel(group)} 组`}
+                groupName={`${formatGroupLabel(group)}${t("groupSuffix")}`}
                 rows={rows}
               />
             ))}
           </div>
         ) : (
           <div className="glass rounded-2xl py-16 text-center text-sm font-mono text-white/45">
-            暂无出线形势数据
+            {t("empty")}
           </div>
         )}
       </div>

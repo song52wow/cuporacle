@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { resolveTeamKey } from "@/lib/teams";
 
 // 中文 / 英文球队名 → ISO 3166-1 alpha-2
 // 覆盖 2026 世界杯 48 强 + 备用（兼容中英文输入）
@@ -157,6 +159,7 @@ interface TeamFlagProps {
 }
 
 export function TeamFlag({ name, size = "md", className }: TeamFlagProps) {
+  const t = useTranslations("common");
   const [imgFailed, setImgFailed] = useState(false);
   const safeName = name?.trim() ?? "";
   const isPlaceholder = !safeName || PLACEHOLDER_RE.test(safeName);
@@ -171,8 +174,8 @@ export function TeamFlag({ name, size = "md", className }: TeamFlagProps) {
           SIZE_CLASSES[size],
           className
         )}
-        aria-label={`待定 ${label}`}
-        title={`待定 ${label}`}
+        aria-label={`${t("tbd")} ${label}`}
+        title={`${t("tbd")} ${label}`}
       >
         <span className="font-mono text-[10px] sm:text-xs tracking-wider text-white/45">
           {label}
@@ -181,7 +184,8 @@ export function TeamFlag({ name, size = "md", className }: TeamFlagProps) {
     );
   }
 
-  const iso = TEAM_ISO[safeName];
+  const key = resolveTeamKey(safeName);
+  const iso = TEAM_ISO[safeName] ?? (key ? TEAM_ISO[key] : undefined);
   // 2. emoji 兜底：未收录球队 / 分区旗 / CDN 加载失败
   const useEmoji = !iso || SUBDIVISION_FLAG[safeName] !== undefined || imgFailed;
 

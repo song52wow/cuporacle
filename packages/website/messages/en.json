@@ -1,0 +1,222 @@
+{
+  "metadata": {
+    "title": "CupOracle · World Cup AI Predictions",
+    "description": "Multi-model LLM predictions for FIFA World Cup 2026 — win/draw/loss probabilities and score forecasts from group stage to the final."
+  },
+  "nav": {
+    "home": "Home",
+    "matches": "Matches",
+    "standings": "Standings",
+    "viewPredictions": "View Predictions",
+    "live": "LIVE · 2026"
+  },
+  "locale": {
+    "zh": "中文",
+    "en": "English",
+    "switch": "Switch language"
+  },
+  "footer": {
+    "about": "CupOracle aggregates predictions from multiple large language models to provide probabilistic match outcomes and score references for football fans.",
+    "platform": "Platform",
+    "home": "Home",
+    "allMatches": "All Matches",
+    "standings": "Standings",
+    "upcoming": "Upcoming",
+    "finished": "Finished",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "disclaimer": "⚠️ Predictions are for research and entertainment only. Not betting advice."
+  },
+  "hero": {
+    "badge": "2026 USA/Mexico/Canada · Final Jul 19 · {days} days left",
+    "title1": "Multi-model AI",
+    "title2": "for the World Cup",
+    "subtitle": "Aggregated judgments from leading LLMs — win/draw/loss probabilities, most likely scores, and key factors for every match from the group stage to the final.",
+    "ctaUpcoming": "Upcoming Matches",
+    "ctaAll": "Browse All Matches",
+    "demoGroup": "Group {group}",
+    "mostLikelyScore": "Most likely score",
+    "confidence": "Confidence {pct}%",
+    "allModelsReady": "Ready"
+  },
+  "stats": {
+    "allMatches": "All matches",
+    "upcoming": "Upcoming",
+    "finished": "Finished",
+    "predicted": "AI predicted",
+    "suffix": ""
+  },
+  "upcoming": {
+    "title": "Upcoming · {count} tomorrow",
+    "subtitle": "Multi-model AI predictions are ready for tomorrow's matches.",
+    "viewUpcoming": "View upcoming",
+    "empty": "No matches tomorrow."
+  },
+  "features": {
+    "title": "More than predictions —",
+    "titleHighlight": "decision support",
+    "subtitle": "Combine LLM probability judgments with structured match data for insights you can read, compare, and verify.",
+    "multiModel": {
+      "title": "Parallel multi-model predictions",
+      "desc": "MiMo, DeepSeek, GLM, and MiniMax generate judgments in parallel, then aggregate via consensus."
+    },
+    "dataDriven": {
+      "title": "Data-driven explanations",
+      "desc": "Every conclusion comes with recent form, H2H history, injuries, and venue factors — traceable probabilities."
+    },
+    "fullTournament": {
+      "title": "Full tournament tracking",
+      "desc": "Status, xG, and confidence sync in real time — group stage through the final in one place."
+    }
+  },
+  "cta": {
+    "title1": "Who wins the next match?",
+    "title2": "What does AI say?",
+    "subtitle": "Browse full predictions, key factors, and multi-model comparisons for every match.",
+    "enter": "Match Center",
+    "upcoming": "Upcoming matches"
+  },
+  "matches": {
+    "title": "All",
+    "titleHighlight": "Matches",
+    "subtitle": "Every match from the group stage to the final. Filter by status, group, or search teams.",
+    "metaTitle": "All Matches · CupOracle",
+    "metaDescription": "Browse AI predictions and status for all 2026 World Cup matches.",
+    "filterAll": "All",
+    "filterTimed": "Upcoming",
+    "filterInPlay": "Live",
+    "filterFinished": "Finished",
+    "searchPlaceholder": "Search team / venue",
+    "allGroups": "All groups",
+    "count": "{count} matches",
+    "searching": "matching \"{q}\"",
+    "sortByTime": "Sorted by kickoff",
+    "noResults": "No matches found",
+    "groupSuffix": " Group",
+    "home": "Home",
+    "away": "Away",
+    "finished": "Finished",
+    "aiConsensus": "AI consensus",
+    "predicting": "Generating prediction…",
+    "models": "{ok}/{total} models"
+  },
+  "matchDetail": {
+    "notFound": "Match not found · CupOracle",
+    "metaDescription": "AI multi-model prediction: {home} vs {away}",
+    "back": "Back to matches",
+    "matchInfo": "Match info",
+    "kickoff": "Kickoff",
+    "venue": "Venue",
+    "stage": "Stage",
+    "group": "Group",
+    "modelStatus": "Model status",
+    "tbd": "TBD",
+    "groupQualification": "Group {group} qualification",
+    "aiReady": "AI prediction ready",
+    "aiProb": "AI win probability",
+    "mostLikelyScore": "Most likely score",
+    "confidence": "Confidence {pct}%",
+    "noPrediction": "No prediction yet — not generated or match finished",
+    "xgHome": "xG (Home)",
+    "xgAway": "xG (Away)",
+    "goalDiff": "Goal diff exp.",
+    "topScores": "Top {n} likely scores",
+    "keyFactors": "Key factors",
+    "keyPlayers": "Key players",
+    "aiNarrative": "AI analysis",
+    "playerRatings": "Player ratings",
+    "player": "Player",
+    "overall": "OVR",
+    "passing": "Pass",
+    "shooting": "Shot",
+    "defense": "Def",
+    "pace": "Pace",
+    "squadValue": "Squad value comparison",
+    "details": "Details",
+    "squadDetails": "Squad details",
+    "goalkeepers": "Goalkeepers",
+    "defenders": "Defenders",
+    "midfielders": "Midfielders",
+    "forwards": "Forwards",
+    "yearsOld": "{age} yrs",
+    "modelCompare": "Model comparison",
+    "modelsReady": "{ok}/{total} models ready",
+    "viewing": "Viewing",
+    "context": "Context",
+    "viewContext": "View context",
+    "noModelResult": "Model returned no result",
+    "consensus": "Model consensus",
+    "modelContext": "Model context",
+    "userInput": "User input",
+    "systemPrompt": "System prompt",
+    "loading": "Loading…",
+    "contextError": "Failed to load context. Please try again.",
+    "hashMatch": " · Matches current data rebuild",
+    "hashMismatch": " · Data may have changed since prediction",
+    "close": "Close",
+    "riskFactors": "Risks & uncertainty",
+    "form": "Form {score}"
+  },
+  "stages": {
+    "GROUP_STAGE": "Group stage",
+    "ROUND_OF_32": "Round of 32",
+    "ROUND_OF_16": "Round of 16",
+    "QUARTER_FINALS": "Quarter-finals",
+    "SEMI_FINALS": "Semi-finals",
+    "FINAL": "Final"
+  },
+  "winProb": {
+    "home": "Home",
+    "draw": "Draw",
+    "away": "Away",
+    "homeWin": "Home {pct}%",
+    "drawPct": "Draw {pct}%",
+    "awayWin": "Away {pct}%"
+  },
+  "impact": {
+    "positive_home": "Favors home",
+    "negative_home": "Hurts home",
+    "positive_away": "Favors away",
+    "negative_away": "Hurts away",
+    "neutral": "Neutral"
+  },
+  "qualification": {
+    "qualified": "Qualified",
+    "pending": "Pending",
+    "eliminated": "Eliminated",
+    "unknown": "TBD",
+    "locked": "Qualification secured",
+    "out": "Eliminated from contention",
+    "notStarted": "Not started — qualification TBD",
+    "tbd": "Qualification TBD",
+    "top2": "Top 2 advance",
+    "pageTitle": "Group stage",
+    "pageTitleHighlight": "qualification",
+    "pageSubtitle": "Qualification status and scenarios. Top 2 from each group advance.",
+    "metaTitle": "Group Qualification · CupOracle",
+    "metaDescription": "2026 World Cup group stage qualification scenarios.",
+    "updatedAt": "Updated {date}",
+    "empty": "No qualification data available",
+    "groupSuffix": " Group"
+  },
+  "common": {
+    "tbd": "TBD",
+    "vs": "VS",
+    "kickoff": "kickoff",
+    "groupDemo": "Group C",
+    "allModels": "All models"
+  },
+  "notifications": {
+    "enabled": "Notifications on",
+    "denied": "Notifications blocked",
+    "enable": "Enable prediction alerts"
+  },
+  "privacy": {
+    "metaTitle": "Privacy Policy · CupOracle",
+    "metaDescription": "CupOracle privacy policy — how we collect and use data, including Google AdSense and cookies.",
+    "legal": "Legal",
+    "title": "Privacy Policy",
+    "updated": "Last updated: June 25, 2026",
+    "backHome": "← Back to home"
+  }
+}

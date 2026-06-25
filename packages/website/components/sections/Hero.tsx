@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { ArrowRight, Sparkles, Activity, BarChart3, Trophy } from "lucide-react";
 import { TeamFlag } from "@/components/TeamFlag";
+import { TeamName } from "@/components/TeamName";
 
-// 2026 世界杯决赛开球时间（UTC）：7月19日 20:00 = 北京时间 7月20日 04:00
 const FINAL_KICKOFF = new Date("2026-07-19T20:00:00Z");
 
 function daysUntil(target: Date): number {
@@ -14,7 +15,9 @@ function daysUntil(target: Date): number {
 }
 
 export function Hero() {
-  // SSR 阶段不计算天数,避免水合不匹配；挂载后每 60 分钟刷新一次
+  const t = useTranslations("hero");
+  const tWin = useTranslations("winProb");
+  const tCommon = useTranslations("common");
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
 
   useEffect(() => {
@@ -22,9 +25,9 @@ export function Hero() {
     const id = setInterval(() => setDaysLeft(daysUntil(FINAL_KICKOFF)), 60 * 60 * 1000);
     return () => clearInterval(id);
   }, []);
+
   return (
     <section className="relative overflow-hidden">
-      {/* 装饰：网格 + 光晕 */}
       <div className="pointer-events-none absolute inset-0 grid-bg opacity-50" />
       <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] rounded-full bg-cyan-violet opacity-25 blur-[120px]" />
       <div className="pointer-events-none absolute top-40 right-0 w-[420px] h-[420px] rounded-full bg-violet-500/30 blur-[100px]" />
@@ -32,7 +35,6 @@ export function Hero() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-20 pb-24">
         <div className="grid lg:grid-cols-[1.15fr_1fr] gap-10 items-center">
-          {/* 左侧：文案 */}
           <div>
             <motion.div
               initial={{ opacity: 0, y: 8 }}
@@ -43,7 +45,9 @@ export function Hero() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-glow" />
               <span className="text-emerald-300/90">LIVE</span>
               <span className="text-white/40">·</span>
-              <span className="text-white/70">2026 美加墨世界杯 · 决赛 7月20日 · 剩 {daysLeft ?? "—"} 天</span>
+              <span className="text-white/70">
+                {t("badge", { days: daysLeft ?? "—" })}
+              </span>
             </motion.div>
 
             <motion.h1
@@ -52,9 +56,9 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mt-6 text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05] text-balance"
             >
-              <span className="text-white">让多模型 AI</span>
+              <span className="text-white">{t("title1")}</span>
               <br />
-              <span className="text-gradient-cyan-violet">读懂世界杯</span>
+              <span className="text-gradient-cyan-violet">{t("title2")}</span>
             </motion.h1>
 
             <motion.p
@@ -63,8 +67,7 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mt-6 text-base sm:text-lg text-white/65 max-w-xl leading-relaxed"
             >
-              汇总多家主流大模型的判断，给出每场比赛的胜平负概率、最可能比分与关键因素。
-              从小组赛到决赛，<span className="text-white">每一次判断都有迹可循</span>。
+              {t("subtitle")}
             </motion.p>
 
             <motion.div
@@ -74,11 +77,11 @@ export function Hero() {
               className="mt-8 flex flex-col sm:flex-row gap-3"
             >
               <Link
-                href="/matches?status=TIMED"
+                href="/matches#TIMED"
                 className="group inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-cyan-violet text-ink-950 font-semibold text-sm shadow-neon hover:brightness-110 transition"
               >
                 <Sparkles className="w-4 h-4" />
-                关注即将开赛
+                {t("ctaUpcoming")}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
               </Link>
               <Link
@@ -86,11 +89,10 @@ export function Hero() {
                 className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full glass text-white/85 font-medium text-sm hover:text-white"
               >
                 <Trophy className="w-4 h-4" />
-                查看全部赛事
+                {t("ctaAll")}
               </Link>
             </motion.div>
 
-            {/* 模型徽章 */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -108,7 +110,6 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* 右侧：可视化卡片 */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
@@ -117,23 +118,31 @@ export function Hero() {
           >
             <div className="relative glass-strong rounded-3xl p-6 shadow-glass">
               <div className="flex items-center gap-3">
-                <TeamFlag name="巴西" size="md" className="rounded-lg" />
+                <TeamFlag name="Brazil" size="md" className="rounded-lg" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold text-white truncate">巴西</div>
-                  <div className="text-[10px] font-mono text-white/40">FIFA #3 · 小组赛 C</div>
+                  <div className="text-sm font-semibold text-white truncate">
+                    <TeamName name="Brazil" />
+                  </div>
+                  <div className="text-[10px] font-mono text-white/40">
+                    FIFA #3 · {t("demoGroup", { group: "C" })}
+                  </div>
                 </div>
                 <div className="text-white/30 text-sm font-mono">VS</div>
                 <div className="flex-1 min-w-0 text-right">
-                  <div className="text-sm font-semibold text-white truncate">摩洛哥</div>
-                  <div className="text-[10px] font-mono text-white/40">FIFA #13 · 小组赛 C</div>
+                  <div className="text-sm font-semibold text-white truncate">
+                    <TeamName name="Morocco" />
+                  </div>
+                  <div className="text-[10px] font-mono text-white/40">
+                    FIFA #13 · {t("demoGroup", { group: "C" })}
+                  </div>
                 </div>
-                <TeamFlag name="摩洛哥" size="md" className="rounded-lg" />
+                <TeamFlag name="Morocco" size="md" className="rounded-lg" />
               </div>
 
               <div className="mt-6 space-y-3">
                 <div>
                   <div className="flex items-center justify-between text-[11px] font-mono mb-1.5">
-                    <span className="text-cyan-300">主胜</span>
+                    <span className="text-cyan-300">{tWin("home")}</span>
                     <span className="text-white">61.4%</span>
                   </div>
                   <div className="h-2 rounded-full bg-ink-700/50 overflow-hidden">
@@ -147,7 +156,7 @@ export function Hero() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between text-[11px] font-mono mb-1.5">
-                    <span className="text-violet-300">平局</span>
+                    <span className="text-violet-300">{tWin("draw")}</span>
                     <span className="text-white">21.0%</span>
                   </div>
                   <div className="h-2 rounded-full bg-ink-700/50 overflow-hidden">
@@ -161,7 +170,7 @@ export function Hero() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between text-[11px] font-mono mb-1.5">
-                    <span className="text-rose-300">客胜</span>
+                    <span className="text-rose-300">{tWin("away")}</span>
                     <span className="text-white">17.6%</span>
                   </div>
                   <div className="h-2 rounded-full bg-ink-700/50 overflow-hidden">
@@ -176,13 +185,12 @@ export function Hero() {
               </div>
 
               <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] font-mono">
-                <span className="text-white/45">最可能比分</span>
+                <span className="text-white/45">{t("mostLikelyScore")}</span>
                 <span className="text-white font-semibold">2 - 0</span>
-                <span className="text-emerald-300/90">置信度 14.2%</span>
+                <span className="text-emerald-300/90">{t("confidence", { pct: "14.2" })}</span>
               </div>
             </div>
 
-            {/* 浮动小卡片 */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -207,8 +215,8 @@ export function Hero() {
             >
               <div className="flex items-center gap-2 text-[11px] font-mono">
                 <BarChart3 className="w-3.5 h-3.5 text-violet-300" />
-                <span className="text-white/60">全部模型</span>
-                <span className="text-emerald-300/90">已就绪</span>
+                <span className="text-white/60">{tCommon("allModels")}</span>
+                <span className="text-emerald-300/90">{t("allModelsReady")}</span>
               </div>
             </motion.div>
           </motion.div>

@@ -13,9 +13,13 @@ export function formatGoals(n: number, digits = 2) {
   return n.toFixed(digits);
 }
 
-export function formatDate(iso: string) {
+export function dateLocale(locale: string) {
+  return locale === "en" ? "en-US" : "zh-CN";
+}
+
+export function formatDate(iso: string, locale = "zh") {
   const d = new Date(iso);
-  return d.toLocaleString("zh-CN", {
+  return d.toLocaleString(dateLocale(locale), {
     month: "2-digit",
     day: "2-digit",
     weekday: "short",
@@ -25,7 +29,11 @@ export function formatDate(iso: string) {
   });
 }
 
-export function relativeTime(iso: string) {
+export function formatDateTime(iso: string, locale = "zh") {
+  return new Date(iso).toLocaleString(dateLocale(locale));
+}
+
+export function relativeTime(iso: string, locale = "zh") {
   const target = new Date(iso).getTime();
   const now = Date.now();
   const diff = target - now;
@@ -34,10 +42,19 @@ export function relativeTime(iso: string) {
   const hour = 60 * minute;
   const day = 24 * hour;
   const future = diff > 0;
+  const en = locale === "en";
   let value: string;
-  if (abs < hour) value = `${Math.round(abs / minute)} 分钟`;
-  else if (abs < day) value = `${Math.round(abs / hour)} 小时`;
-  else value = `${Math.round(abs / day)} 天`;
+  if (abs < hour) {
+    const n = Math.round(abs / minute);
+    value = en ? `${n} min` : `${n} 分钟`;
+  } else if (abs < day) {
+    const n = Math.round(abs / hour);
+    value = en ? `${n} hr` : `${n} 小时`;
+  } else {
+    const n = Math.round(abs / day);
+    value = en ? `${n} d` : `${n} 天`;
+  }
+  if (en) return future ? `in ${value}` : `${value} ago`;
   return future ? `${value}后` : `${value}前`;
 }
 

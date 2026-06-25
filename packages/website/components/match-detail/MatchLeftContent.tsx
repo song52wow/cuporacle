@@ -1,6 +1,7 @@
 "use client";
 
 import { Quote, BookOpen } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useActivePrediction } from "./MatchDetailClient";
 import { ScoreDistributionBars } from "@/components/ScoreDistributionBars";
 import { KeyFactorsPanel, KeyPlayersPanel } from "./KeyFactorsPanel";
@@ -11,13 +12,13 @@ interface Props {
 }
 
 export function MatchLeftContent({ homeName, awayName }: Props) {
+  const t = useTranslations("matchDetail");
   const p = useActivePrediction();
 
   if (!p) return null;
 
   return (
     <>
-      {/* 比分分布 */}
       {p.score_distribution.length > 0 && (
         <div className="glass rounded-2xl p-5 sm:p-6">
           <div className="flex items-center gap-2 mb-4 text-white">
@@ -25,24 +26,18 @@ export function MatchLeftContent({ homeName, awayName }: Props) {
               <BookOpen className="w-4 h-4" />
             </span>
             <h3 className="text-base sm:text-lg font-semibold tracking-tight">
-              最可能比分（Top {Math.min(8, p.score_distribution.length)}）
+              {t("topScores", { n: Math.min(8, p.score_distribution.length) })}
             </h3>
           </div>
           <ScoreDistributionBars items={p.score_distribution} limit={8} />
         </div>
       )}
 
-      {/* 关键因素 + 关键球员 */}
       <KeyFactorsPanel prediction={p} />
       {p.key_players.length > 0 && (
-        <KeyPlayersPanel
-          prediction={p}
-          homeName={homeName}
-          awayName={awayName}
-        />
+        <KeyPlayersPanel prediction={p} homeName={homeName} awayName={awayName} />
       )}
 
-      {/* 叙述 */}
       {p.narrative && (
         <div className="glass rounded-2xl p-5 sm:p-6">
           <div className="flex items-center gap-2 mb-3 text-white">
@@ -50,7 +45,7 @@ export function MatchLeftContent({ homeName, awayName }: Props) {
               <Quote className="w-4 h-4" />
             </span>
             <h3 className="text-base sm:text-lg font-semibold tracking-tight">
-              AI 解读
+              {t("aiNarrative")}
             </h3>
           </div>
           <p className="text-sm sm:text-base text-white/75 leading-relaxed">

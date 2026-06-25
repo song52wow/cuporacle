@@ -1,17 +1,14 @@
 "use client";
 
-// 通知订阅开关。
-// - 不支持 Web Push 的浏览器 / iOS < 16.4:不渲染按钮
-// - 三种状态:加载中 / 未订阅(显示"开启") / 已订阅(显示"关闭")
-// - 权限被拒:显示灰色"通知被屏蔽",引导用户在浏览器设置中开启
-
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Bell, BellOff, BellRing, Loader2 } from "lucide-react";
 import { isPushSupported, getCurrentSubscription, subscribeToPush, unsubscribeFromPush } from "@/lib/push";
 
 type Status = "loading" | "unsupported" | "denied" | "subscribed" | "unsubscribed";
 
 export function NotificationBell() {
+  const t = useTranslations("notifications");
   const [status, setStatus] = useState<Status>("loading");
   const [busy, setBusy] = useState(false);
 
@@ -22,8 +19,6 @@ export function NotificationBell() {
         if (!cancelled) setStatus("unsupported");
         return;
       }
-      // iOS < 16.4 在 PWA 模式下 PushManager 存在但 subscribe 失败;
-      // 这里先看权限,再看现有订阅。
       if (Notification.permission === "denied") {
         if (!cancelled) setStatus("denied");
         return;
@@ -58,10 +53,10 @@ export function NotificationBell() {
   const Icon = icon;
   const label =
     status === "subscribed"
-      ? "通知已开启"
+      ? t("enabled")
       : status === "denied"
-        ? "通知被屏蔽"
-        : "开启新预测通知";
+        ? t("denied")
+        : t("enable");
 
   return (
     <button

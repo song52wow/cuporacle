@@ -1,28 +1,29 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { CheckCircle2, AlertTriangle, Users } from "lucide-react";
 import type { PredictionResponse, KeyFactor, KeyPlayer } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const IMPACT_META: Record<
-  KeyFactor["impact"],
-  { label: string; color: string; bar: string }
-> = {
-  positive_home: { label: "利好主队", color: "text-cyan-300", bar: "from-cyan-400 to-cyan-500" },
-  negative_home: { label: "不利主队", color: "text-rose-300", bar: "from-rose-400 to-rose-500" },
-  positive_away: { label: "利好客队", color: "text-violet-300", bar: "from-violet-400 to-violet-500" },
-  negative_away: { label: "不利客队", color: "text-amber-300", bar: "from-amber-400 to-amber-500" },
-  neutral: { label: "中性", color: "text-white/55", bar: "from-white/30 to-white/10" },
+const IMPACT_COLORS: Record<KeyFactor["impact"], { color: string; bar: string }> = {
+  positive_home: { color: "text-cyan-300", bar: "from-cyan-400 to-cyan-500" },
+  negative_home: { color: "text-rose-300", bar: "from-rose-400 to-rose-500" },
+  positive_away: { color: "text-violet-300", bar: "from-violet-400 to-violet-500" },
+  negative_away: { color: "text-amber-300", bar: "from-amber-400 to-amber-500" },
+  neutral: { color: "text-white/55", bar: "from-white/30 to-white/10" },
 };
 
 export function KeyFactorsPanel({ prediction }: { prediction: PredictionResponse }) {
+  const t = useTranslations("matchDetail");
+  const tImpact = useTranslations("impact");
+
   return (
     <div className="glass rounded-2xl p-5 sm:p-6">
-      <SectionTitle icon={<CheckCircle2 className="w-4 h-4" />} title="关键因素" />
+      <SectionTitle icon={<CheckCircle2 className="w-4 h-4" />} title={t("keyFactors")} />
       <ul className="mt-4 space-y-3">
         {prediction.key_factors.map((f, i) => {
-          const meta = IMPACT_META[f.impact];
+          const meta = IMPACT_COLORS[f.impact];
           return (
             <motion.li
               key={i}
@@ -38,7 +39,7 @@ export function KeyFactorsPanel({ prediction }: { prediction: PredictionResponse
                   meta.color
                 )}
               >
-                {meta.label}
+                {tImpact(f.impact)}
               </span>
               <div className="min-w-0">
                 <p className="text-sm text-white/85 leading-relaxed">{f.factor}</p>
@@ -59,12 +60,11 @@ export function KeyFactorsPanel({ prediction }: { prediction: PredictionResponse
         })}
       </ul>
 
-      {/* 风险因素 */}
       {prediction.risk_factors?.length > 0 && (
         <div className="mt-6 pt-5 border-t border-white/5">
           <SectionTitle
             icon={<AlertTriangle className="w-4 h-4 text-amber-300" />}
-            title="风险与不确定"
+            title={t("riskFactors")}
           />
           <ul className="mt-3 space-y-2 text-sm text-white/65">
             {prediction.risk_factors.map((r, i) => (
@@ -89,14 +89,15 @@ export function KeyPlayersPanel({
   homeName: string;
   awayName: string;
 }) {
+  const t = useTranslations("matchDetail");
   const home = prediction.key_players.filter((p) => p.team === "home");
   const away = prediction.key_players.filter((p) => p.team === "away");
   return (
     <div className="glass rounded-2xl p-5 sm:p-6">
-      <SectionTitle icon={<Users className="w-4 h-4" />} title="关键球员" />
+      <SectionTitle icon={<Users className="w-4 h-4" />} title={t("keyPlayers")} />
       <div className="mt-4 grid sm:grid-cols-2 gap-3">
-        <PlayerGroup label={homeName} players={home} accent="cyan" />
-        <PlayerGroup label={awayName} players={away} accent="violet" />
+        <PlayerGroup label={homeName} players={home} accent="cyan" t={t} />
+        <PlayerGroup label={awayName} players={away} accent="violet" t={t} />
       </div>
     </div>
   );
@@ -106,10 +107,12 @@ function PlayerGroup({
   label,
   players,
   accent,
+  t,
 }: {
   label: string;
   players: KeyPlayer[];
   accent: "cyan" | "violet";
+  t: ReturnType<typeof useTranslations<"matchDetail">>;
 }) {
   return (
     <div>
@@ -129,25 +132,19 @@ function PlayerGroup({
           >
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-white truncate">
-                  {p.name}
-                </div>
-                <div className="text-[10px] font-mono text-white/45">
-                  {p.position}
-                </div>
+                <div className="text-sm font-semibold text-white truncate">{p.name}</div>
+                <div className="text-[10px] font-mono text-white/45">{p.position}</div>
               </div>
               <div className="text-right">
                 <div className="text-base font-mono text-white tabular-nums">
                   {p.strength.toFixed(1)}
                 </div>
                 <div className="text-[10px] font-mono text-white/40">
-                  状态 {p.form_score.toFixed(1)}
+                  {t("form", { score: p.form_score.toFixed(1) })}
                 </div>
               </div>
             </div>
-            <p className="mt-2 text-xs text-white/55 leading-relaxed">
-              {p.rationale}
-            </p>
+            <p className="mt-2 text-xs text-white/55 leading-relaxed">{p.rationale}</p>
           </div>
         ))}
       </div>
@@ -168,9 +165,7 @@ export function SectionTitle({
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2 text-white">
         <span className="text-cyan-300">{icon}</span>
-        <h3 className="text-base sm:text-lg font-semibold tracking-tight">
-          {title}
-        </h3>
+        <h3 className="text-base sm:text-lg font-semibold tracking-tight">{title}</h3>
       </div>
       {right}
     </div>

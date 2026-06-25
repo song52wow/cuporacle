@@ -1,21 +1,17 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { MatchCard } from "@/components/MatchCard";
 import type { Match, PredictionBundle } from "@/lib/types";
+import { teamMatchesQuery } from "@/lib/teams";
 import { cn } from "@/lib/utils";
+import type { Locale } from "@/i18n/routing";
 
 type StatusFilter = "ALL" | "TIMED" | "FINISHED" | "IN_PLAY";
 type GroupFilter = "ALL" | string;
-
-const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
-  { value: "ALL", label: "全部" },
-  { value: "TIMED", label: "未开赛" },
-  { value: "IN_PLAY", label: "进行中" },
-  { value: "FINISHED", label: "已结束" },
-];
 
 interface Props {
   matches: Match[];
@@ -23,13 +19,21 @@ interface Props {
 }
 
 export function MatchesExplorer({ matches, predictions }: Props) {
+  const locale = useLocale() as Locale;
+  const t = useTranslations("matches");
   const router = useRouter();
   const pathname = usePathname();
   const [status, setStatus] = useState<StatusFilter>("ALL");
   const [group, setGroup] = useState<GroupFilter>("ALL");
   const [q, setQ] = useState("");
 
-  // 初始化自 URL hash
+  const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
+    { value: "ALL", label: t("filterAll") },
+    { value: "TIMED", label: t("filterTimed") },
+    { value: "IN_PLAY", label: t("filterInPlay") },
+    { value: "FINISHED", label: t("filterFinished") },
+  ];
+
   useEffect(() => {
     function parseHash() {
       const h = window.location.hash.replace(/^#/, "").toUpperCase();
@@ -64,13 +68,13 @@ export function MatchesExplorer({ matches, predictions }: Props) {
         if (!q.trim()) return true;
         const k = q.toLowerCase();
         return (
-          m.home_team_name.toLowerCase().includes(k) ||
-          m.away_team_name.toLowerCase().includes(k) ||
+          teamMatchesQuery(m.home_team_name, k, locale) ||
+          teamMatchesQuery(m.away_team_name, k, locale) ||
           (m.venue ?? "").toLowerCase().includes(k)
         );
       })
       .sort((a, b) => +new Date(a.utc_date) - +new Date(b.utc_date));
-  }, [matches, status, group, q]);
+  }, [matches, status, group, q, locale]);
 
   const counts = useMemo(() => {
     const c: Record<StatusFilter, number> = {
@@ -92,11 +96,8 @@ export function MatchesExplorer({ matches, predictions }: Props) {
 
   return (
     <div>
-      {/* 筛选条 */}
       <div className="glass-strong rounded-2xl p-2 sm:p-3 flex flex-col gap-3">
-        {/* 第 1 行：状态 + 搜索 */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          {/* 状态 tab */}
           <div className="flex items-center gap-1 p-1 rounded-xl bg-ink-700/40 hairline overflow-x-auto">
             {STATUS_OPTIONS.map((s) => (
               <button
@@ -124,19 +125,17 @@ export function MatchesExplorer({ matches, predictions }: Props) {
             ))}
           </div>
 
-          {/* 搜索 */}
           <div className="sm:ml-auto relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="搜索球队 / 场地"
+              placeholder={t("searchPlaceholder")}
               className="w-full pl-9 pr-3 py-2 rounded-lg bg-ink-700/40 hairline text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-cyan-400/40"
             />
           </div>
         </div>
 
-        {/* 第 2 行：分组筛选 */}
         {groups.length > 0 && (
           <div className="flex items-center gap-1 p-1 rounded-xl bg-ink-700/40 hairline overflow-x-auto">
             <button
@@ -148,7 +147,7 @@ export function MatchesExplorer({ matches, predictions }: Props) {
                   : "text-white/55 hover:text-white"
               )}
             >
-              全部组
+              {t("allGroups")}
             </button>
             {groups.map((g) => (
               <button
@@ -168,37 +167,25 @@ export function MatchesExplorer({ matches, predictions }: Props) {
         )}
       </div>
 
-      {/* 计数 + 排序提示 */}
       <div className="mt-5 flex items-center justify-between text-xs font-mono text-white/45">
         <span>
-          共 <span className="text-white">{filtered.length}</span> 场
-          {q && (
-            <>
-              {" "}
-              · 包含「
-              <span className="text-white">{q}</span>」
-            </>
-          )}
+          {t("count", { count: filtered.length })}
+          {q && <> · {t("searching", { q })}</>}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <SlidersHorizontal className="w-3 h-3" /> 按开赛时间升序
+          <SlidersHorizontal className="w-3 h-3" /> {t("sortByTime")}
         </span>
       </div>
 
-      {/* 列表 */}
       {filtered.length > 0 ? (
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((m) => (
-            <MatchCard
-              key={m.id}
-              match={m}
-              prediction={predictions[m.id]}
-            />
+            <MatchCard key={m.id} match={m} prediction={predictions[m.id]} />
           ))}
         </div>
       ) : (
         <div className="mt-12 text-center text-white/45 text-sm font-mono py-16 glass rounded-2xl">
-          未找到匹配的比赛
+          {t("noResults")}
         </div>
       )}
     </div>

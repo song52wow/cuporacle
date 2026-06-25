@@ -32,6 +32,92 @@ interface TeamSquadRow {
   squad_json: string;
 }
 
+interface GroupStandingRow {
+  team_id: string;
+  team_name: string;
+  position: number;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goals_for: number;
+  goals_against: number;
+  goal_diff: number;
+  points: number;
+  qualification_status: string | null;
+  qualification_note: string | null;
+}
+
+const QUALIFICATION_STATUS_ZH: Record<string, string> = {
+  qualified: "已出线",
+  pending: "待出线",
+  eliminated: "已无缘出线",
+};
+
+function qualificationStatusZh(status: string | null | undefined): string {
+  if (!status) return "";
+  return QUALIFICATION_STATUS_ZH[status] ?? status;
+}
+
+function formatStandingsForPrompt(rows: GroupStandingRow[]): Record<string, unknown>[] {
+  return rows.map((r) => ({
+    position: r.position,
+    team_name: r.team_name,
+    played: r.played,
+    won: r.won,
+    drawn: r.drawn,
+    lost: r.lost,
+    goals_for: r.goals_for,
+    goals_against: r.goals_against,
+    goal_diff: r.goal_diff,
+    points: r.points,
+    qualification_status: r.qualification_status,
+    qualification_status_zh: qualificationStatusZh(r.qualification_status),
+    qualification_note: r.qualification_note,
+  }));
+}
+
+function teamQualificationSnapshot(
+  rows: GroupStandingRow[],
+  teamId: string
+): Record<string, unknown> | null {
+  const r = rows.find((row) => row.team_id === teamId);
+  if (!r) return null;
+  return {
+    position: r.position,
+    points: r.points,
+    goal_diff: r.goal_diff,
+    qualification_status: r.qualification_status,
+    qualification_status_zh: qualificationStatusZh(r.qualification_status),
+    qualification_note: r.qualification_note,
+  };
+}
+
+async function fetchGroupStandingsContext(
+  db: D1Database,
+  group: string
+): Promise<Record<string, unknown>> {
+  const { results: rows } = await db
+    .prepare(
+      `SELECT team_id, team_name, position,
+              played, won, drawn, lost,
+              goals_for, goals_against, goal_diff, points,
+              qualification_status, qualification_note
+       FROM group_standings
+       WHERE "group" = ?
+       ORDER BY position`
+    )
+    .bind(group)
+    .all<GroupStandingRow>();
+
+  if (!rows.length) return {};
+
+  return {
+    group_standings: formatStandingsForPrompt(rows),
+    _raw_standings: rows,
+  };
+}
+
 interface PredictionModelRow {
   provider: string;
   model: string;
@@ -100,7 +186,7 @@ async function buildUserData(
       .bind(m.away_team_id).first<TeamSquadRow>(),
   ]);
 
-  return {
+  const data: Record<string, unknown> = {
     match: {
       id: m.id,
       stage: m.stage,
@@ -116,6 +202,21 @@ async function buildUserData(
     home_squad: squadToList(homeSquad?.squad_json),
     away_squad: squadToList(awaySquad?.squad_json),
   };
+
+  if (m.group) {
+    const groupCtx = await fetchGroupStandingsContext(db, m.group);
+    const raw = groupCtx._raw_standings as GroupStandingRow[] | undefined;
+    delete groupCtx._raw_standings;
+    Object.assign(data, groupCtx);
+    if (raw?.length) {
+      const homeQ = teamQualificationSnapshot(raw, m.home_team_id);
+      const awayQ = teamQualificationSnapshot(raw, m.away_team_id);
+      if (homeQ) data.home_team_qualification = homeQ;
+      if (awayQ) data.away_team_qualification = awayQ;
+    }
+  }
+
+  return data;
 }
 
 export async function getModelContext(
@@ -141,7 +242,7 @@ export async function getModelContext(
       "SELECT * FROM prediction_models WHERE match_id = ? AND provider != 'leader' ORDER BY provider"
     ).bind(matchId).all<PredictionModelRow>();
 
-    const matchInfo = {
+    const matchInfo: Record<string, unknown> = {
       home_team: m.home_team_name,
       away_team: m.away_team_name,
       utc_date: m.utc_date,
@@ -149,6 +250,19 @@ export async function getModelContext(
       stage: m.stage,
       group: m.group,
     };
+
+    if (m.group) {
+      const groupCtx = await fetchGroupStandingsContext(db, m.group);
+      const raw = groupCtx._raw_standings as GroupStandingRow[] | undefined;
+      delete groupCtx._raw_standings;
+      Object.assign(matchInfo, groupCtx);
+      if (raw?.length) {
+        const homeQ = teamQualificationSnapshot(raw, m.home_team_id);
+        const awayQ = teamQualificationSnapshot(raw, m.away_team_id);
+        if (homeQ) matchInfo.home_team_qualification = homeQ;
+        if (awayQ) matchInfo.away_team_qualification = awayQ;
+      }
+    }
 
     userPrompt = buildLeaderUserPrompt(
       matchInfo,

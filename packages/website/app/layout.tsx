@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: "CupOracle · 世界杯 AI 预测平台",
   description:
     "基于多模型 LLM 的 2026 世界杯胜负、概率与比分预测，覆盖小组赛至决赛的全程赛事追踪。",
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL("https://cuporacle.com"),
   manifest: "/manifest.webmanifest",
   icons: {
     icon: "/favicon.ico",
@@ -38,6 +38,8 @@ export const metadata: Metadata = {
     description:
       "基于多模型 LLM 的 2026 世界杯胜负、概率与比分预测，覆盖小组赛至决赛的全程赛事追踪。",
     type: "website",
+    url: "https://cuporacle.com",
+    siteName: "CupOracle",
   },
 };
 

@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin } from "lucide-react";
-import { getMatchDetail, getPrediction } from "@/lib/api";
+import { getMatchDetail, getPrediction, getStandings } from "@/lib/api";
+import { GroupQualificationPanel } from "@/components/GroupQualificationPanel";
+import { formatGroupLabel } from "@/lib/utils";
 import { MatchDetailProvider, HeroFromContext, SidebarModelComparison } from "@/components/match-detail/MatchDetailClient";
 import { MatchLeftContent } from "@/components/match-detail/MatchLeftContent";
 import { MarketValueCompare } from "@/components/match-detail/MarketValueCompare";
@@ -26,8 +28,15 @@ export default async function MatchDetailPage({
 }) {
   const detail = await getMatchDetail(params.id);
   if (!detail) return notFound();
-  const prediction = await getPrediction(params.id);
+  const [prediction, standingsData] = await Promise.all([
+    getPrediction(params.id),
+    getStandings(),
+  ]);
   const m = detail.match;
+  const groupRows =
+    m.group && m.stage === "GROUP_STAGE"
+      ? standingsData.standings.filter((r) => r.group === m.group)
+      : [];
 
   return (
     <div className="relative">
@@ -102,6 +111,14 @@ export default async function MatchDetailPage({
                 homeName={m.home_team_name}
                 awayName={m.away_team_name}
               />
+
+              {groupRows.length > 0 && (
+                <GroupQualificationPanel
+                  groupName={`${formatGroupLabel(m.group)} 组出线形势`}
+                  rows={groupRows}
+                  teamIds={[m.home_team_id, m.away_team_id]}
+                />
+              )}
 
               <RatingsTable
                 home={detail.home_ratings}

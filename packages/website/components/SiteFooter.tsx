@@ -20,6 +20,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2 text-sm">
             <li><Link href="/" className="text-white/70 hover:text-white">首页</Link></li>
             <li><Link href="/matches" className="text-white/70 hover:text-white">全部赛事</Link></li>
+            <li><Link href="/standings" className="text-white/70 hover:text-white">出线形势</Link></li>
             <li><Link href="/matches?status=TIMED" className="text-white/70 hover:text-white">未开赛</Link></li>
             <li><Link href="/matches?status=FINISHED" className="text-white/70 hover:text-white">已结束</Link></li>
           </ul>

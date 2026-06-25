@@ -45,3 +45,11 @@ export function topScore(distribution: { home: number; away: number; p: number }
   if (!distribution?.length) return null;
   return [...distribution].sort((a, b) => b.p - a.p)[0];
 }
+
+/** GROUP_A / A → 展示用组名 */
+export function formatGroupLabel(group: string | null | undefined): string {
+  if (!group) return "";
+  const m = group.match(/^GROUP_([A-Z])$/i);
+  if (m) return m[1]!.toUpperCase();
+  return group.replace(/^GROUP_/i, "").toUpperCase() || group;
+}

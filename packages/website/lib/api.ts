@@ -6,6 +6,7 @@ import {
   mockMatchDetail,
   mockMatchList,
   mockPredictionBundle,
+  mockStandings,
   mockTournament,
 } from "./mock";
 import type {
@@ -49,7 +50,11 @@ async function safeFetch<T>(path: string): Promise<T | null> {
       next: { revalidate: 0 },
     });
     if (!res.ok) return null;
-    return (await res.json()) as T;
+    const json = (await res.json()) as T & { error?: string };
+    if (json && typeof json === "object" && "error" in json && !("standings" in json) && !("matches" in json)) {
+      return null;
+    }
+    return json as T;
   } catch (e) {
     if (process.env.NODE_ENV !== "production") {
       console.log(`[api] fetch FAILED ${path}:`, (e as Error).message);
@@ -65,7 +70,9 @@ export async function getTournament(): Promise<Tournament> {
 
 export async function getStandings(): Promise<StandingsResponse> {
   const data = await safeFetch<StandingsResponse>("/api/standings");
-  return data ?? { updated_at: null, standings: [], total: 0 };
+  if (data?.standings) return data;
+  if (USE_MOCK) return mockStandings();
+  return { updated_at: null, standings: [], total: 0 };
 }
 
 export async function getMatches(

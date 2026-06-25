@@ -1,10 +1,12 @@
 import type {
+  GroupStandingEntry,
   Match,
   MatchDetailResponse,
   MatchListResponse,
   ModelResult,
   PredictionBundle,
   ScoreDistributionItem,
+  StandingsResponse,
   Tournament,
 } from "./types";
 
@@ -282,6 +284,110 @@ export function mockMatchDetail(id: string): MatchDetailResponse | null {
       { team_id: m.away_team_id, player_name: "Youssef En-Nesyri", position: "Forward", shirt_number: 19, overall: 8.4, passing: 7.2, shooting: 8.6, defense: 4.0, pace: 8.5, rationale: "支点与抢点能力突出", as_of: "2026-06-10" },
     ],
     prediction_status: { mimo: "ok", deepseek: "ok", glm: "ok", minimax: "ok" },
+  };
+}
+
+function computeMockStandings(): GroupStandingEntry[] {
+  type Row = GroupStandingEntry;
+  const stats = new Map<string, Row>();
+
+  const ensure = (group: string, id: string, name: string): Row => {
+    const key = `${group}:${id}`;
+    if (!stats.has(key)) {
+      stats.set(key, {
+        group,
+        team_id: id,
+        team_name: name,
+        position: 0,
+        played: 0,
+        won: 0,
+        drawn: 0,
+        lost: 0,
+        goals_for: 0,
+        goals_against: 0,
+        goal_diff: 0,
+        points: 0,
+        qualification_status: "pending",
+        qualification_note: null,
+      });
+    }
+    return stats.get(key)!;
+  };
+
+  for (const m of MOCK_MATCHES) {
+    if (
+      m.stage !== "GROUP_STAGE" ||
+      !m.group ||
+      m.status !== "FINISHED" ||
+      m.home_score == null ||
+      m.away_score == null
+    ) {
+      continue;
+    }
+    const h = ensure(m.group, m.home_team_id, m.home_team_name);
+    const a = ensure(m.group, m.away_team_id, m.away_team_name);
+    h.played += 1;
+    a.played += 1;
+    h.goals_for += m.home_score;
+    h.goals_against += m.away_score;
+    a.goals_for += m.away_score;
+    a.goals_against += m.home_score;
+    if (m.home_score > m.away_score) {
+      h.won += 1;
+      a.lost += 1;
+      h.points += 3;
+    } else if (m.home_score < m.away_score) {
+      a.won += 1;
+      h.lost += 1;
+      a.points += 3;
+    } else {
+      h.drawn += 1;
+      a.drawn += 1;
+      h.points += 1;
+      a.points += 1;
+    }
+  }
+
+  const byGroup = new Map<string, Row[]>();
+  for (const row of Array.from(stats.values())) {
+    row.goal_diff = row.goals_for - row.goals_against;
+    if (!byGroup.has(row.group)) byGroup.set(row.group, []);
+    byGroup.get(row.group)!.push(row);
+  }
+
+  const out: GroupStandingEntry[] = [];
+  for (const teams of Array.from(byGroup.values())) {
+    teams.sort(
+      (a: Row, b: Row) =>
+        b.points - a.points || b.goal_diff - a.goal_diff || b.goals_for - a.goals_for
+    );
+    teams.forEach((t: Row, i: number) => {
+      const pos = i + 1;
+      let status: GroupStandingEntry["qualification_status"] = "pending";
+      let note: string | null = null;
+      if (pos <= 2 && t.played > 0) {
+        status = "qualified";
+      } else if (t.played === 0) {
+        status = "pending";
+        note = "尚未开赛";
+      }
+      out.push({
+        ...t,
+        position: pos,
+        qualification_status: status,
+        qualification_note: note,
+      });
+    });
+  }
+  return out.sort((a, b) => a.group.localeCompare(b.group) || a.position - b.position);
+}
+
+export function mockStandings(): StandingsResponse {
+  const standings = computeMockStandings();
+  return {
+    updated_at: new Date().toISOString(),
+    standings,
+    total: standings.length,
   };
 }
 

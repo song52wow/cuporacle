@@ -10,6 +10,7 @@ import { Trophy } from "lucide-react";
 const NAV = [
   { href: "/", label: "首页" },
   { href: "/matches", label: "赛事" },
+  { href: "/standings", label: "出线形势" },
 ];
 
 export function SiteHeader() {

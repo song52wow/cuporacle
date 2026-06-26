@@ -24,7 +24,7 @@ export function GroupQualificationPanel({ groupName, rows, teamIds }: Props) {
 
   function qualificationClass(status: GroupStandingEntry["qualification_status"]): string {
     if (status === "qualified") {
-      return "bg-emerald-400/15 text-emerald-300 border-emerald-400/25";
+      return "bg-emerald-400/30 text-emerald-100 border-emerald-400/40";
     }
     if (status === "pending") {
       return "bg-amber-400/15 text-amber-300 border-amber-400/25";
@@ -53,14 +53,30 @@ export function GroupQualificationPanel({ groupName, rows, teamIds }: Props) {
     <div className="glass rounded-2xl overflow-hidden">
       <div className="px-4 py-3 flex items-center justify-between border-b border-white/[0.06]">
         <h3 className="text-sm font-semibold text-white tracking-tight">{groupName}</h3>
-        <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest">
-          {t("top2")}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-emerald-400/25 bg-emerald-400/10 text-emerald-300/90">
+            {t("chipQualifierZone")}
+          </span>
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-cyan-400/25 bg-cyan-400/10 text-cyan-300/90">
+            {t("chipThirdPlacePath")}
+          </span>
+        </div>
       </div>
-      <ul className="divide-y divide-white/[0.04]">
+      <ul className="divide-y divide-white/[0.07]">
         {sorted.map((r) => (
-          <li key={r.team_id} className="px-4 py-3.5">
-            <div className="flex items-start gap-3">
+          <li
+            key={r.team_id}
+            className={cn(
+              "px-4 py-3.5",
+              r.qualification_status === "eliminated" && "opacity-55 grayscale"
+            )}
+          >
+            <div
+                className={cn(
+                  "flex items-start gap-3",
+                  r.qualification_status === "pending" && "border-l-2 border-cyan-400/50 pl-3 -ml-1"
+                )}
+              >
               <TeamFlag name={r.team_name} size="sm" className="mt-0.5" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">

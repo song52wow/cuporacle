@@ -16,6 +16,8 @@ import type {
   PredictionBundle,
   ModelContextResponse,
   StandingsResponse,
+  ThirdPlaceRankingResponse,
+  OverallRankingResponse,
   TeamDetailResponse,
   TeamListResponse,
   Tournament,
@@ -73,6 +75,74 @@ export async function getStandings(): Promise<StandingsResponse> {
   if (data?.standings) return data;
   if (USE_MOCK) return mockStandings();
   return { updated_at: null, standings: [], total: 0 };
+}
+
+function buildThirdPlaceFromStandings(standings: StandingsResponse["standings"]): ThirdPlaceRankingResponse {
+  const thirds = standings
+    .filter((s) => s.position === 3)
+    .sort((a, b) => b.points - a.points || b.goal_diff - a.goal_diff || b.goals_for - a.goals_for)
+    .map((s, i) => ({
+      rank: i + 1,
+      group: s.group,
+      team_id: s.team_id,
+      team_name: s.team_name,
+      played: s.played,
+      won: s.won,
+      drawn: s.drawn,
+      lost: s.lost,
+      goals_for: s.goals_for,
+      goals_against: s.goals_against,
+      goal_diff: s.goal_diff,
+      points: s.points,
+      group_finished: s.played >= 3,
+      rank_best: i + 1,
+      rank_worst: i + 1,
+      in_qualifying_zone: i + 1 <= 8,
+      qualification_status: s.qualification_status,
+      qualification_note: s.qualification_note,
+    }));
+  return { updated_at: null, spots: 8, entries: thirds, total: thirds.length };
+}
+
+export async function getThirdPlaceRanking(): Promise<ThirdPlaceRankingResponse> {
+  const data = await safeFetch<ThirdPlaceRankingResponse>("/api/standings/third-place");
+  if (data?.entries) return data;
+  const standings = await getStandings();
+  if (standings.standings.length > 0) return buildThirdPlaceFromStandings(standings.standings);
+  return { updated_at: null, spots: 8, entries: [], total: 0 };
+}
+
+function buildOverallFromStandings(standings: StandingsResponse["standings"]): OverallRankingResponse {
+  const sorted = [...standings].sort(
+    (a, b) => b.points - a.points || b.goal_diff - a.goal_diff || b.goals_for - a.goals_for
+  );
+  const entries = sorted.map((s, i) => ({
+    rank: i + 1,
+    group: s.group,
+    group_position: s.position,
+    team_id: s.team_id,
+    team_name: s.team_name,
+    played: s.played,
+    won: s.won,
+    drawn: s.drawn,
+    lost: s.lost,
+    goals_for: s.goals_for,
+    goals_against: s.goals_against,
+    goal_diff: s.goal_diff,
+    points: s.points,
+    group_finished: s.played >= 3,
+    qualification_status: s.qualification_status,
+    qualification_note: s.qualification_note,
+  }));
+  return { updated_at: null, entries, total: entries.length };
+}
+
+export async function getOverallRanking(): Promise<OverallRankingResponse> {
+  const data = await safeFetch<OverallRankingResponse>("/api/standings/overall");
+  if (data?.entries) return data;
+  const standings = await getStandings();
+  if (standings.standings.length > 0) return buildOverallFromStandings(standings.standings);
+  return { updated_at: null, entries: [], total: 0 };
 }
 
 export async function getMatches(

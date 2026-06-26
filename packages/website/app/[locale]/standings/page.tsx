@@ -1,6 +1,8 @@
 import { getTranslations, getLocale } from "next-intl/server";
-import { getStandings } from "@/lib/api";
+import { getStandings, getThirdPlaceRanking, getOverallRanking } from "@/lib/api";
 import { GroupQualificationPanel } from "@/components/GroupQualificationPanel";
+import { ThirdPlaceRankingPanel } from "@/components/ThirdPlaceRankingPanel";
+import { OverallRankingPanel } from "@/components/OverallRankingPanel";
 import type { GroupStandingEntry } from "@/lib/types";
 import { formatGroupLabel, formatDateTime } from "@/lib/utils";
 
@@ -30,7 +32,11 @@ function groupStandings(standings: GroupStandingEntry[]) {
 export default async function StandingsPage() {
   const locale = await getLocale();
   const t = await getTranslations("qualification");
-  const data = await getStandings();
+  const [data, thirdPlace, overall] = await Promise.all([
+    getStandings(),
+    getThirdPlaceRanking(),
+    getOverallRanking(),
+  ]);
   const groups = groupStandings(data.standings);
 
   return (
@@ -51,6 +57,14 @@ export default async function StandingsPage() {
             </p>
           )}
         </div>
+
+        {overall.entries.length > 0 && (
+          <OverallRankingPanel entries={overall.entries} />
+        )}
+
+        {thirdPlace.entries.length > 0 && (
+          <ThirdPlaceRankingPanel entries={thirdPlace.entries} spots={thirdPlace.spots} />
+        )}
 
         {groups.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

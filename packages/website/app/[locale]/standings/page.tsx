@@ -158,7 +158,7 @@ function GroupSection({
       </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {groups.map(([group, rows]) => (
-          <div key={group} id={`group-${group}`} className="scroll-mt-32">
+          <div key={group} id={`group-${group}`} className="scroll-mt-40">
             <GroupQualificationPanel
               groupName={`${formatGroupLabel(group)}${suffix}`}
               rows={rows}

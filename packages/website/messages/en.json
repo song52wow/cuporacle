@@ -8,7 +8,11 @@
     "matches": "Matches",
     "standings": "Standings",
     "viewPredictions": "View Predictions",
-    "live": "LIVE · 2026"
+    "live": "LIVE · 2026",
+    "disclaimer": "Predictions are for research and entertainment only. Not betting advice.",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": "Language"
   },
   "locale": {
     "zh": "中文",

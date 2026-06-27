@@ -8,7 +8,11 @@
     "matches": "赛事",
     "standings": "出线形势",
     "viewPredictions": "查看预测",
-    "live": "LIVE · 2026"
+    "live": "LIVE · 2026",
+    "disclaimer": "预测仅供研究与娱乐参考，不构成任何投注建议。",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "language": "语言"
   },
   "locale": {
     "zh": "中文",

@@ -35,10 +35,7 @@ export async function SiteFooter() {
         </div>
       </div>
       <div className="relative border-t border-white/5">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-5 flex flex-col items-center gap-3">
-          <p className="text-[10px] text-amber-300/90 font-mono font-semibold tracking-wide text-center bg-amber-400/10 border border-amber-400/20 rounded-lg px-4 py-2">
-            {t("disclaimer")}
-          </p>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-5 flex items-center justify-center">
           <p className="text-xs text-white/30 font-mono">© 2026 CupOracle</p>
         </div>
       </div>

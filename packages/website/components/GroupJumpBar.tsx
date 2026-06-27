@@ -69,7 +69,7 @@ export function GroupJumpBar({ groups, className }: Props) {
   return (
     <div
       className={cn(
-        "sticky top-16 z-20 -mx-4 sm:mx-0 px-4 sm:px-0",
+        "sticky top-24 z-20 -mx-4 sm:mx-0 px-4 sm:px-0",
         "bg-[#050816]/85 backdrop-blur supports-[backdrop-filter]:bg-[#050816]/65",
         "border-y border-white/[0.06] py-3",
         className

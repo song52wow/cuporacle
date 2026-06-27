@@ -7,14 +7,15 @@ import { TournamentRankingTable } from "@/components/TournamentRankingTable";
 interface Props {
   entries: ThirdPlaceRankingEntry[];
   spots?: number;
+  className?: string;
 }
 
-export function ThirdPlaceRankingPanel({ entries, spots = 8 }: Props) {
+export function ThirdPlaceRankingPanel({ entries, spots = 8, className }: Props) {
   const t = useTranslations("qualification");
 
   return (
     <TournamentRankingTable
-      className="mb-8"
+      className={className}
       title={t("thirdPlaceTitle")}
       subtitle={t("thirdPlaceSubtitle", { spots })}
       legend={t("thirdPlaceLegend", { spots })}
